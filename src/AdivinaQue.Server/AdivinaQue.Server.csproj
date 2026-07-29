@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.28" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdivinaQue.Contracts\AdivinaQue.Contracts.csproj" />
+    <ProjectReference Include="..\AdivinaQue.Engine\AdivinaQue.Engine.csproj" />
+    <ProjectReference Include="..\AdivinaQue.Client\AdivinaQue.Client.csproj" />
+  </ItemGroup>
+
+</Project>
