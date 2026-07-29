@@ -1,0 +1,41 @@
+@page "/join/{code}"
+@inject GameClient GameClient
+@inject NavigationManager Navigation
+
+<PageTitle>Unirse a sala @Code</PageTitle>
+
+<div class="home-screen">
+    <h1>Sala @Code</h1>
+
+    @if (_error is null)
+    {
+        <p>Uniéndote a la sala…</p>
+    }
+    else
+    {
+        <p class="text-danger">@_error</p>
+        <a class="btn btn-primary" href="/">Volver al inicio</a>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Code { get; set; } = string.Empty;
+
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var code = Code.Trim().ToUpperInvariant();
+        var ok = await GameClient.JoinRoomAsync(code);
+
+        if (ok)
+        {
+            Navigation.NavigateTo($"/room/{code}", replace: true);
+        }
+        else
+        {
+            _error = GameClient.LastError?.Message ?? "No se pudo unir a la sala.";
+        }
+    }
+}

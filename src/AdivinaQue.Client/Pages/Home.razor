@@ -1,7 +1,68 @@
-﻿@page "/"
+@page "/"
+@inject GameClient GameClient
+@inject NavigationManager Navigation
 
-<PageTitle>Home</PageTitle>
+<PageTitle>AdivinaQue</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="home-screen">
+    <h1>AdivinaQue</h1>
+    <p class="lead">Adivina la carta secreta de tu rival, entre dos jugadores.</p>
 
-Welcome to your new app.
+    <button class="btn btn-primary btn-lg w-100 mb-4" @onclick="CreateAsync" disabled="@_busy">
+        Crear sala
+    </button>
+
+    <form @onsubmit="JoinAsync" @onsubmit:preventDefault>
+        <label for="code" class="form-label">Unirse con código</label>
+        <input id="code" class="form-control text-uppercase mb-2" maxlength="6" @bind="_code" placeholder="ABC123" />
+        <button type="submit" class="btn btn-outline-primary w-100" disabled="@(_busy || string.IsNullOrWhiteSpace(_code))">
+            Unirse
+        </button>
+    </form>
+
+    @if (_error is not null)
+    {
+        <p class="text-danger mt-3">@_error</p>
+    }
+</div>
+
+@code {
+    private string _code = string.Empty;
+    private bool _busy;
+    private string? _error;
+
+    private async Task CreateAsync()
+    {
+        _busy = true;
+        _error = null;
+        var ok = await GameClient.CreateRoomAsync();
+        _busy = false;
+
+        if (ok && GameClient.RoomCode is not null)
+        {
+            Navigation.NavigateTo($"/room/{GameClient.RoomCode}");
+        }
+        else
+        {
+            _error = "No se pudo crear la sala.";
+        }
+    }
+
+    private async Task JoinAsync()
+    {
+        _busy = true;
+        _error = null;
+        var code = _code.Trim().ToUpperInvariant();
+        var ok = await GameClient.JoinRoomAsync(code);
+        _busy = false;
+
+        if (ok)
+        {
+            Navigation.NavigateTo($"/room/{code}");
+        }
+        else
+        {
+            _error = GameClient.LastError?.Message ?? "No se pudo unir a la sala.";
+        }
+    }
+}

@@ -1,0 +1,70 @@
+@implements IDisposable
+@inject GameClient GameClient
+
+@{
+    var projection = GameClient.Projection!;
+    var finish = projection.Finish!;
+    var youWon = finish.Winner == GameClient.PlayerId;
+}
+
+<div class="game-over">
+    <h2>@(youWon ? "¡Ganaste!" : "Perdiste")</h2>
+    <p>@ReasonLabel(finish.Reason)</p>
+
+    <div class="revealed-cards">
+        <div>
+            <span>Tu carta</span>
+            <CardTile Card="@finish.RevealedCards[GameClient.PlayerId!.Value]" />
+        </div>
+        <div>
+            <span>Carta del rival</span>
+            <CardTile Card="@OpponentCard(finish)" />
+        </div>
+    </div>
+
+    <div class="history">
+        <h3>Historial completo</h3>
+        <ul>
+            @foreach (var entry in projection.History)
+            {
+                <li>
+                    <strong>@(entry.AskedByPlayerId == GameClient.PlayerId ? "Tú" : "Rival"):</strong>
+                    @entry.Text
+                    <em>— @ResolutionLabel(entry.Resolution)</em>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <a class="btn btn-primary w-100" href="/">Volver al inicio</a>
+</div>
+
+@code {
+    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => GameClient.Changed -= OnChanged;
+
+    private CardDto OpponentCard(FinishInfoDto finish) =>
+        finish.RevealedCards.First(kv => kv.Key != GameClient.PlayerId).Value;
+
+    private static string ReasonLabel(FinishReasonDto reason) => reason switch
+    {
+        FinishReasonDto.CorrectGuess => "Adivinó la carta correcta.",
+        FinishReasonDto.WrongGuess => "Adivinó la carta equivocada.",
+        FinishReasonDto.Forfeit => "El rival no volvió a tiempo tras desconectarse.",
+        FinishReasonDto.Timeout => "La partida terminó por tiempo.",
+        _ => string.Empty,
+    };
+
+    private static string ResolutionLabel(QuestionResolutionDto? resolution) => resolution switch
+    {
+        QuestionResolutionDto.Yes => "Sí",
+        QuestionResolutionDto.No => "No",
+        QuestionResolutionDto.NotApplicable => "No aplica",
+        QuestionResolutionDto.Expired => "sin responder (expiró)",
+        null => "sin responder",
+        _ => string.Empty,
+    };
+}

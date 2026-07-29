@@ -16,6 +16,7 @@ public sealed record Projection(
     TurnPhase? Phase,
     Guid? ActivePlayerId,
     long StateVersion,
+    IReadOnlyList<Card> Deck,
     Card? YourCard,
     IReadOnlyCollection<string> YourEliminations,
     IReadOnlyList<QuestionView> History,

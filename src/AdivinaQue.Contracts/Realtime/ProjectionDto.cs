@@ -5,6 +5,7 @@ public sealed record ProjectionDto(
     TurnPhaseDto? Phase,
     Guid? ActivePlayerId,
     long StateVersion,
+    IReadOnlyList<CardDto> Deck,
     CardDto? YourCard,
     IReadOnlyList<string> YourEliminations,
     IReadOnlyList<QuestionEntryDto> History,

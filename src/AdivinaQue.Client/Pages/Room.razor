@@ -1,0 +1,74 @@
+@page "/room/{code}"
+@implements IDisposable
+@inject GameClient GameClient
+@inject NavigationManager Navigation
+
+<PageTitle>Sala @Code</PageTitle>
+
+@if (_error is not null)
+{
+    <div class="home-screen">
+        <p class="text-danger">@_error</p>
+        <a class="btn btn-primary" href="/">Volver al inicio</a>
+    </div>
+}
+else if (GameClient.RoomCode is null)
+{
+    <p>Conectando…</p>
+}
+else if (GameClient.Projection is null)
+{
+    @* Solo en la sala, esperando al segundo jugador: todavía no hay Match ni
+       Projection (recién se crean cuando la sala se llena), así que esta rama
+       muestra la sala de espera sin depender del estado del motor. *@
+    <ConnectionStatusBadge />
+    <WaitingRoomView Code="@Code" />
+}
+else
+{
+    <ConnectionStatusBadge />
+
+    @switch (GameClient.Projection.Status)
+    {
+        case GameStatusDto.Lobby:
+        case GameStatusDto.Setup:
+            <WaitingRoomView Code="@Code" />
+            break;
+        case GameStatusDto.Finished:
+            <GameOverView />
+            break;
+        case GameStatusDto.Abandoned:
+            <div class="home-screen">
+                <p>Esta sala fue abandonada.</p>
+                <a class="btn btn-primary" href="/">Volver al inicio</a>
+            </div>
+            break;
+        default:
+            <GameBoardView />
+            break;
+    }
+}
+
+@code {
+    [Parameter]
+    public string Code { get; set; } = string.Empty;
+
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        GameClient.Changed += OnChanged;
+
+        var code = Code.Trim().ToUpperInvariant();
+        var ok = await GameClient.JoinRoomAsync(code);
+
+        if (!ok)
+        {
+            _error = GameClient.LastError?.Message ?? "No se pudo entrar a la sala.";
+        }
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => GameClient.Changed -= OnChanged;
+}

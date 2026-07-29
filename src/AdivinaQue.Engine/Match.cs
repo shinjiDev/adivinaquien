@@ -517,6 +517,7 @@ public sealed class Match
             showsTurnState ? Phase : null,
             showsTurnState ? ActivePlayerId : null,
             StateVersion,
+            _deck,
             yourCard,
             _eliminations.TryGetValue(viewerPlayerId, out var set) ? set : Array.Empty<string>(),
             history,

@@ -4,16 +4,21 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado actual del repo
 
-**Fases 0-3 completas.** `AdivinaQue.Engine` implementa la máquina de estados completa;
+**Fases 0-4 completas.** `AdivinaQue.Engine` implementa la máquina de estados completa;
 `AdivinaQue.Contracts`/`AdivinaQue.PackTool` tienen el esquema y validador del content
 pack; `AdivinaQue.Server` tiene el `GameHub` de SignalR, gestión de salas con capacidad
 2 atómica, `IGameStore` (InMemory + Sqlite), QR, y un barrido de fondo que detecta
-timeouts sin que ningún cliente llame a nada. 103 tests en verde en total (Engine +
-PackTool + Server, este último con integración real de dos clientes SignalR). Fase 4
-(cliente Blazor) todavía no se ha empezado. Antes de escribir código de producto, revisa
-qué fase sigue en `docs/PROMPT-claude-code.md` — el trabajo está diseñado para
-ejecutarse **fase por fase, deteniéndose al final de cada una** para mostrar un resumen
-y esperar aprobación antes de continuar. No saltes fases ni las combines.
+timeouts sin que ningún cliente llame a nada. `AdivinaQue.Client` (Blazor WASM) tiene las
+4 pantallas completas (inicio, sala de espera con QR, tablero, fin de partida) contra el
+mazo placeholder de 16 cartas — verificado jugando una partida completa de punta a punta
+con dos contextos de navegador (Playwright), incluyendo reconexión y resync. 103 tests en
+verde en total (Engine + PackTool + Server, este último con integración real de dos
+clientes SignalR; el Client no suma un proyecto de tests de componentes, ver plan de Fase
+4). Fase 5 (mazo de bailes típicos de Chile) todavía no se ha empezado. Antes de escribir
+código de producto, revisa qué fase sigue en `docs/PROMPT-claude-code.md` — el trabajo
+está diseñado para ejecutarse **fase por fase, deteniéndose al final de cada una** para
+mostrar un resumen y esperar aprobación antes de continuar. No saltes fases ni las
+combines.
 
 ## Comandos
 
@@ -64,7 +69,9 @@ src/
 ├── AdivinaQue.Contracts/   # DTOs, eventos, enums, códigos de error (Realtime/) + esquema de content pack (ContentPack/)
 ├── AdivinaQue.Engine/      # motor puro: sin red, sin I/O, sin DateTime.Now (implementado en Fase 1)
 ├── AdivinaQue.Server/      # Rooms/, Persistence/, Hubs/, BackgroundServices/, Mapping/, Qr/ (ver realtime-contract)
-├── AdivinaQue.Client/      # Blazor WASM
+├── AdivinaQue.Client/      # Blazor WASM: Pages/ (Home, Join, Room), Components/ (WaitingRoomView,
+│                           # GameBoardView, GameOverView, CardTile, ConnectionStatusBadge),
+│                           # Services/ (GameClient, PlayerIdentity), wwwroot/js/interop.js (localStorage)
 └── AdivinaQue.PackTool/    # CLI que valida mazos y emite reporte (Model/, Analysis/, Validation/, Reporting/)
 tests/
 ├── AdivinaQue.Engine.Tests/    # xUnit + FluentAssertions, referencia Engine
@@ -122,6 +129,17 @@ no debe aplicarla dos veces.
 **Acciones inválidas nunca lanzan excepción hacia el cliente.** Se validan contra la
 tupla `(Estado, Fase, ActorId)` y devuelven un `Error(code, message)` tipado sin alterar
 el estado.
+
+**Cada componente Blazor que lee estado de `GameClient` se suscribe él mismo a
+`Changed`.** No alcanza con que un componente ancestro (p. ej. `Room.razor`) se suscriba
+y llame `StateHasChanged()`: si el componente hijo tiene su propio render en curso
+disparado por un evento local (p. ej. un botón con un `async` handler todavía
+esperando), la re-renderización en cascada del padre puede perderse y el hijo queda
+mostrando datos viejos aunque el dato ya haya llegado — un bug real encontrado en Fase 4
+(el respondedor no veía la pregunta pendiente pese a que el `ProjectionDto` correcto ya
+estaba en memoria). Cada vista que lee `GameClient.Projection`/`RoomCode`/etc. debe
+implementar `IDisposable`, suscribirse en `OnInitialized` y desuscribirse en `Dispose`
+(ver `GameBoardView`, `WaitingRoomView`, `GameOverView`, `ConnectionStatusBadge`).
 
 ## Máquina de estados, roles de turno y contrato de eventos
 

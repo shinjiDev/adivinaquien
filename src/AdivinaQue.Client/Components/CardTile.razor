@@ -1,0 +1,22 @@
+<div class="card-tile @CssClass" @onclick="HandleClick">
+    <span class="card-tile-label">@Card.Id</span>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public CardDto Card { get; set; } = null!;
+
+    [Parameter]
+    public bool Eliminated { get; set; }
+
+    [Parameter]
+    public bool Selectable { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelect { get; set; }
+
+    private string CssClass =>
+        (Eliminated ? "eliminated " : string.Empty) + (Selectable ? "selectable" : string.Empty);
+
+    private Task HandleClick() => Selectable ? OnSelect.InvokeAsync(Card.Id) : Task.CompletedTask;
+}

@@ -1,0 +1,24 @@
+@implements IDisposable
+@inject GameClient GameClient
+
+<div class="connection-badge @CssClass">
+    @Label
+</div>
+
+@code {
+    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => GameClient.Changed -= OnChanged;
+
+    private string Label => GameClient.ConnectionState switch
+    {
+        HubConnectionState.Connected => "Conectado",
+        HubConnectionState.Reconnecting => "Reconectando…",
+        HubConnectionState.Connecting => "Conectando…",
+        _ => "Desconectado",
+    };
+
+    private string CssClass => GameClient.ConnectionState == HubConnectionState.Connected ? "ok" : "warn";
+}

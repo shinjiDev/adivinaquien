@@ -52,8 +52,17 @@ public class ProjectionSecrecyTests
 
         var projection = match.GetProjection(viewerId);
         projection.Finish.Should().BeNull("la partida no ha terminado, no debería haber revelación todavía");
+        projection.YourCard!.Id.Should().NotBe(opponentCardId);
 
-        var payload = JsonSerializer.Serialize(projection);
-        payload.Should().NotContain(opponentCardId, "la carta secreta del oponente jamás debe serializarse hacia este jugador");
+        // El mazo completo (Projection.Deck) es información pública — todas las cartas
+        // posibles, sin importar a quién se le asignó cada una — así que legítimamente
+        // contiene el id de la carta del oponente igual que el de cualquier otra. Lo que
+        // nunca debe pasar es que algún OTRO campo la identifique como la secreta del
+        // oponente; se serializa sin el mazo para chequear justamente eso.
+        var withoutDeck = projection with { Deck = Array.Empty<Card>() };
+        var payload = JsonSerializer.Serialize(withoutDeck);
+        payload.Should().NotContain(
+            opponentCardId,
+            "fuera del catálogo público del mazo, la carta secreta del oponente jamás debe aparecer");
     }
 }

@@ -16,6 +16,7 @@ public static class ProjectionMapper
         projection.Phase is null ? null : ToDto(projection.Phase.Value),
         projection.ActivePlayerId,
         projection.StateVersion,
+        projection.Deck.Select(ToDto).ToList(),
         projection.YourCard is null ? null : ToDto(projection.YourCard),
         projection.YourEliminations.ToList(),
         projection.History.Select(ToDto).ToList(),

@@ -1,16 +1,28 @@
-﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+@inherits LayoutComponentBase
+@implements IDisposable
+@inject GameClient GameClient
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<div class="app-shell">
+    @if (GameClient.LastError is not null)
+    {
+        <div class="banner warn error-toast">
+            <span>@GameClient.LastError.Message</span>
+            <button class="btn-close-toast" @onclick="Dismiss">✕</button>
         </div>
+    }
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
+    @Body
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        GameClient.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private void Dismiss() => GameClient.ClearLastError();
+
+    public void Dispose() => GameClient.Changed -= OnChanged;
+}
