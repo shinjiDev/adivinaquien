@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AdivinaQue.Client/AdivinaQue.Client.csproj" />
+    <Project Path="src/AdivinaQue.Contracts/AdivinaQue.Contracts.csproj" />
+    <Project Path="src/AdivinaQue.Engine/AdivinaQue.Engine.csproj" />
+    <Project Path="src/AdivinaQue.PackTool/AdivinaQue.PackTool.csproj" />
+    <Project Path="src/AdivinaQue.Server/AdivinaQue.Server.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AdivinaQue.Engine.Tests/AdivinaQue.Engine.Tests.csproj" />
+    <Project Path="tests/AdivinaQue.PackTool.Tests/AdivinaQue.PackTool.Tests.csproj" />
+    <Project Path="tests/AdivinaQue.Server.Tests/AdivinaQue.Server.Tests.csproj" />
+  </Folder>
+</Solution>

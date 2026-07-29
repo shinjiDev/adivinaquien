@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AdivinaQue.Contracts\AdivinaQue.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>
