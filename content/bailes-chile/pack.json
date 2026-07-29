@@ -1,0 +1,281 @@
+{
+  "packId": "bailes-chile",
+  "nombre": "Bailes típicos de Chile (BORRADOR)",
+  "descripcion": "BORRADOR generado por un modelo de lenguaje, PENDIENTE DE VERIFICACIÓN HUMANA antes de publicar. Mazo de 24 bailes tradicionales de Chile para 'Adivina Quién', cubriendo zona norte, centro, sur e insular (Rapa Nui). Las cartas con el campo '_verificar' listan qué atributos o datos tienen confianza factual limitada y deben confirmarse con fuentes académicas antes de usarse en producción.",
+  "idioma": "es-CL",
+  "version": "0.1.0-borrador",
+  "atributos": [
+    {
+      "id": "zona",
+      "tipo": "categorico",
+      "etiqueta": "Zona",
+      "valores": [
+        { "id": "norte", "etiqueta": "Norte", "pregunta": "¿Es un baile del norte de Chile?" },
+        { "id": "centro", "etiqueta": "Centro", "pregunta": "¿Es un baile de la zona central?" },
+        { "id": "sur", "etiqueta": "Sur", "pregunta": "¿Es un baile de la zona sur?" },
+        { "id": "insular", "etiqueta": "Insular", "pregunta": "¿Es un baile de Rapa Nui?" }
+      ]
+    },
+    {
+      "id": "raiz_cultural",
+      "tipo": "categorico",
+      "etiqueta": "Raíz cultural",
+      "valores": [
+        { "id": "indigena", "etiqueta": "Indígena", "pregunta": "¿Tiene su origen directo en un pueblo indígena?" },
+        { "id": "mestiza", "etiqueta": "Mestiza", "pregunta": "¿Mezcla elementos indígenas y europeos?" },
+        { "id": "criolla", "etiqueta": "Criolla", "pregunta": "¿Nació dentro de la tradición criolla rural hispanochilena?" }
+      ]
+    },
+    {
+      "id": "es_grupal",
+      "tipo": "booleano",
+      "etiqueta": "Formación grupal",
+      "pregunta": "¿Se baila en grupo (no en pareja)?"
+    },
+    {
+      "id": "usa_panuelo",
+      "tipo": "booleano",
+      "etiqueta": "Pañuelo",
+      "pregunta": "¿Se baila con pañuelo?"
+    },
+    {
+      "id": "zapateo",
+      "tipo": "booleano",
+      "etiqueta": "Zapateo",
+      "pregunta": "¿Incluye zapateo (golpes rítmicos y marcados con los pies)?"
+    },
+    {
+      "id": "instrumentos",
+      "tipo": "multivalor",
+      "etiqueta": "Instrumentos",
+      "valores": [
+        { "id": "guitarra", "etiqueta": "Guitarra", "pregunta": "¿Se acompaña con guitarra?" },
+        { "id": "acordeon", "etiqueta": "Acordeón", "pregunta": "¿Se acompaña con acordeón?" },
+        { "id": "percusion", "etiqueta": "Percusión", "pregunta": "¿Se acompaña con instrumentos de percusión?" },
+        { "id": "viento", "etiqueta": "Viento", "pregunta": "¿Se acompaña con instrumentos de viento?" }
+      ]
+    },
+    {
+      "id": "caracter",
+      "tipo": "categorico",
+      "etiqueta": "Carácter",
+      "valores": [
+        { "id": "cortejo", "etiqueta": "De cortejo", "pregunta": "¿Es un baile de cortejo (representa el galanteo entre una pareja)?" },
+        { "id": "festivo", "etiqueta": "Festivo", "pregunta": "¿Tiene un carácter principalmente festivo?" },
+        { "id": "ceremonial", "etiqueta": "Ceremonial", "pregunta": "¿Tiene un carácter ceremonial o ritual?" }
+      ]
+    }
+  ],
+  "cartas": [
+    {
+      "id": "cueca-nortina",
+      "nombre": "Cueca nortina",
+      "imagen": "img/cueca-nortina.webp",
+      "atributos": { "zona": "norte", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["percusion", "viento"], "caracter": "festivo" },
+      "ficha": "Variante de la cueca propia del norte grande, acompañada habitualmente por banda de bronces en vez de guitarra, y bailada en fiestas religiosas y patronales.",
+      "fuente": "Conocimiento general de folclore del norte de Chile — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["instrumentos"]
+    },
+    {
+      "id": "trote",
+      "nombre": "Trote",
+      "imagen": "img/trote.webp",
+      "atributos": { "zona": "norte", "raiz_cultural": "indigena", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["viento", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de raíz aymara, de paso saltado y ligero, típico de los carnavales andinos del norte de Chile.",
+      "fuente": "Conocimiento general de folclore altiplánico — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["raiz_cultural"]
+    },
+    {
+      "id": "huayno",
+      "nombre": "Huayño",
+      "imagen": "img/huayno.webp",
+      "atributos": { "zona": "norte", "raiz_cultural": "indigena", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["viento", "percusion", "acordeon"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de origen quechua-aymara extendido por todo el altiplano andino, de paso marcado y giros, presente en fiestas del norte de Chile.",
+      "fuente": "Conocimiento general de folclore andino — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["instrumentos"]
+    },
+    {
+      "id": "cachimbo",
+      "nombre": "Cachimbo",
+      "imagen": "img/cachimbo.webp",
+      "atributos": { "zona": "norte", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["guitarra", "percusion"], "caracter": "cortejo" },
+      "ficha": "Baile de pareja y cortejo propio de la zona de Atacama y Copiapó, emparentado con la familia de la cueca.",
+      "fuente": "Conocimiento general de folclore del norte chico — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["caracter"]
+    },
+    {
+      "id": "cacharpaya",
+      "nombre": "Cacharpaya",
+      "imagen": "img/cacharpaya.webp",
+      "atributos": { "zona": "norte", "raiz_cultural": "indigena", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["viento", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile-canción de despedida que cierra las fiestas del carnaval andino, bailado en grupo al son de instrumentos de viento y percusión.",
+      "fuente": "Conocimiento general de folclore andino — pendiente confirmar con fuente académica específica."
+    },
+    {
+      "id": "cueca",
+      "nombre": "Cueca",
+      "imagen": "img/cueca.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["guitarra", "percusion"], "caracter": "cortejo" },
+      "ficha": "Baile nacional de Chile; representa en pareja el cortejo entre un hombre y una mujer, pañuelo en mano.",
+      "fuente": "Decreto Supremo N.º 23 (1979) del Ministerio de Educación de Chile, que declara la cueca baile nacional — verificar texto exacto del decreto.",
+      "_verificar": ["fuente"]
+    },
+    {
+      "id": "refalosa",
+      "nombre": "Refalosa",
+      "imagen": "img/refalosa.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": true, "zapateo": false, "instrumentos": ["guitarra"], "caracter": "cortejo" },
+      "ficha": "Baile de pareja de salón del siglo XIX, de paso deslizante (de ahí su nombre, de 'resbalosa'), antecesor y pariente de la cueca.",
+      "fuente": "Conocimiento general de folclore de la zona central — pendiente confirmar con fuente académica específica."
+    },
+    {
+      "id": "sajuriana",
+      "nombre": "Sajuriana",
+      "imagen": "img/sajuriana.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["guitarra", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de la tradición criolla de la zona central, de estructura y espíritu emparentados con la cueca.",
+      "fuente": "Conocimiento general de folclore de la zona central — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["ficha"]
+    },
+    {
+      "id": "pequen",
+      "nombre": "Pequén",
+      "imagen": "img/pequen.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": false, "zapateo": true, "instrumentos": ["guitarra", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile de pareja que imita con humor los movimientos del pequén, un ave rapaz pequeña de campos y descampados.",
+      "fuente": "Conocimiento general de folclore de la zona central — pendiente confirmar con fuente académica específica."
+    },
+    {
+      "id": "cuando",
+      "nombre": "Cuando",
+      "imagen": "img/cuando.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["guitarra"], "caracter": "ceremonial" },
+      "ficha": "Baile ceremonial en grupo, danzado en procesiones y fiestas religiosas patronales de la zona central, como acompañamiento devocional.",
+      "fuente": "Conocimiento general de folclore religioso de la zona central — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["ficha"]
+    },
+    {
+      "id": "portenada",
+      "nombre": "Porteñada",
+      "imagen": "img/portenada.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["guitarra", "acordeon"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de carácter festivo asociado a la zona de Valparaíso.",
+      "fuente": "Confianza baja — pendiente confirmar existencia y detalles con fuente académica específica.",
+      "_verificar": ["nombre", "atributos", "ficha", "fuente"]
+    },
+    {
+      "id": "costillar",
+      "nombre": "Costillar",
+      "imagen": "img/costillar.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": false, "zapateo": true, "instrumentos": ["guitarra"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de la tradición criolla de la zona central, de paso vivo y zapateo marcado.",
+      "fuente": "Confianza baja — pendiente confirmar existencia y detalles con fuente académica específica.",
+      "_verificar": ["nombre", "atributos", "ficha", "fuente"]
+    },
+    {
+      "id": "rin",
+      "nombre": "Rin",
+      "imagen": "img/rin.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["guitarra", "acordeon"], "caracter": "cortejo" },
+      "ficha": "Baile de pareja de salón del siglo XIX, parte del mismo grupo de danzas que la refalosa y la sajuriana.",
+      "fuente": "Confianza moderada — pendiente confirmar detalles con fuente académica específica.",
+      "_verificar": ["atributos", "ficha", "fuente"]
+    },
+    {
+      "id": "chocolate",
+      "nombre": "El Chocolate",
+      "imagen": "img/chocolate.webp",
+      "atributos": { "zona": "centro", "raiz_cultural": "criolla", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["guitarra"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de salón de la tradición criolla central, documentado junto a la refalosa y el rin en el repertorio decimonónico.",
+      "fuente": "Confianza baja — pendiente confirmar existencia y detalles con fuente académica específica.",
+      "_verificar": ["nombre", "atributos", "ficha", "fuente"]
+    },
+    {
+      "id": "cueca-chilota",
+      "nombre": "Cueca chilota",
+      "imagen": "img/cueca-chilota.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": true, "zapateo": true, "instrumentos": ["acordeon", "percusion"], "caracter": "cortejo" },
+      "ficha": "Variante sureña de la cueca propia de Chiloé, bailada en pareja con pañuelo y acompañada de acordeón.",
+      "fuente": "Conocimiento general de folclore chilote — pendiente confirmar con fuente académica específica."
+    },
+    {
+      "id": "pericona",
+      "nombre": "Pericona",
+      "imagen": "img/pericona.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "mestiza", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["acordeon", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile en grupo de la tradición chilota, bailado en mingas y fiestas patronales al son del acordeón.",
+      "fuente": "Conocimiento general de folclore chilote — pendiente confirmar con fuente académica específica."
+    },
+    {
+      "id": "sirilla",
+      "nombre": "Sirilla",
+      "imagen": "img/sirilla.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["acordeon"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de raíz europea adaptado en Chiloé, de paso girado, propio de las mingas y velorios de angelito.",
+      "fuente": "Conocimiento general de folclore chilote — pendiente confirmar con fuente académica específica.",
+      "_verificar": ["raiz_cultural"]
+    },
+    {
+      "id": "pavo-chilote",
+      "nombre": "El Pavo",
+      "imagen": "img/pavo-chilote.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["acordeon", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile de pareja que imita con humor los movimientos del pavo, parte del repertorio de bailes de pandero de Chiloé.",
+      "fuente": "Confianza baja — pendiente confirmar existencia y detalles con fuente académica específica.",
+      "_verificar": ["nombre", "atributos", "ficha", "fuente"]
+    },
+    {
+      "id": "choique-purrun",
+      "nombre": "Choique Purrún",
+      "imagen": "img/choique-purrun.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "indigena", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["viento", "percusion"], "caracter": "ceremonial" },
+      "ficha": "Danza ceremonial mapuche bailada en grupo, en la que los danzantes imitan el andar y el vuelo corto del choique (ñandú); presente en el nguillatún.",
+      "fuente": "Conocimiento general de cultura mapuche — pendiente confirmar con fuente académica específica (antropología/etnomusicología mapuche)."
+    },
+    {
+      "id": "loncomeo",
+      "nombre": "Loncomeo",
+      "imagen": "img/loncomeo.webp",
+      "atributos": { "zona": "sur", "raiz_cultural": "indigena", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["percusion", "viento"], "caracter": "ceremonial" },
+      "ficha": "Danza ceremonial mapuche de movimientos ondulantes de cabeza y torso, realizada por la machi o un pequeño grupo de acompañantes en ceremonias rituales.",
+      "fuente": "Conocimiento general de cultura mapuche — pendiente confirmar con fuente académica específica (antropología/etnomusicología mapuche).",
+      "_verificar": ["es_grupal"]
+    },
+    {
+      "id": "sau-sau",
+      "nombre": "Sau-Sau",
+      "imagen": "img/sau-sau.webp",
+      "atributos": { "zona": "insular", "raiz_cultural": "mestiza", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["guitarra", "percusion"], "caracter": "festivo" },
+      "ficha": "Baile en grupo de Rapa Nui, de cadera marcada, incorporado al repertorio isleño mediante el contacto cultural polinésico y hoy parte de las presentaciones folclóricas rapanui.",
+      "fuente": "Confianza baja — origen e historia requieren verificación con fuente especializada en cultura rapanui.",
+      "_verificar": ["raiz_cultural", "instrumentos", "ficha", "fuente"]
+    },
+    {
+      "id": "tamure",
+      "nombre": "Tamure",
+      "imagen": "img/tamure.webp",
+      "atributos": { "zona": "insular", "raiz_cultural": "mestiza", "es_grupal": false, "usa_panuelo": false, "zapateo": false, "instrumentos": ["percusion", "guitarra"], "caracter": "festivo" },
+      "ficha": "Baile de pareja de cadera rápida, de origen tahitiano, adoptado y popularizado en las presentaciones folclóricas de Rapa Nui.",
+      "fuente": "Confianza baja — origen tahitiano y grado de adopción como baile 'típico' rapanui requieren verificación con fuente especializada.",
+      "_verificar": ["raiz_cultural", "ficha", "fuente", "instrumentos"]
+    },
+    {
+      "id": "hoko",
+      "nombre": "Hoko",
+      "imagen": "img/hoko.webp",
+      "atributos": { "zona": "insular", "raiz_cultural": "indigena", "es_grupal": true, "usa_panuelo": false, "zapateo": true, "instrumentos": ["percusion"], "caracter": "ceremonial" },
+      "ficha": "Danza ceremonial en grupo de Rapa Nui que representa un combate ritual, con pisadas marcadas y cantos acompañados de percusión.",
+      "fuente": "Confianza baja — requiere verificación con fuente especializada en cultura rapanui.",
+      "_verificar": ["atributos", "ficha", "fuente", "zapateo"]
+    },
+    {
+      "id": "ature",
+      "nombre": "Ature",
+      "imagen": "img/ature.webp",
+      "atributos": { "zona": "insular", "raiz_cultural": "indigena", "es_grupal": true, "usa_panuelo": false, "zapateo": false, "instrumentos": ["percusion"], "caracter": "ceremonial" },
+      "ficha": "Canto-danza ceremonial en grupo de Rapa Nui, de carácter ritual y narrativo.",
+      "fuente": "Confianza baja — es posible que se clasifique más como canto que como baile; requiere verificación con fuente especializada en cultura rapanui.",
+      "_verificar": ["atributos", "ficha", "fuente", "clasificacion_como_baile"]
+    }
+  ]
+}
