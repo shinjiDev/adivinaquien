@@ -3,6 +3,13 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
+# python-is-python3 provee el binario `python` (no solo `python3`) que busca el paso de
+# compilación nativa de emscripten al publicar en Release; sin él, dotnet publish falla
+# con "unable to find python in $PATH" recién en el último paso del build, tras minutos
+# de instalar el workload — la imagen base del SDK no lo trae.
+RUN apt-get update && apt-get install -y --no-install-recommends python3 python-is-python3 \
+    && rm -rf /var/lib/apt/lists/*
+
 # Necesario para compilar el cliente Blazor WebAssembly dentro del contenedor.
 RUN dotnet workload install wasm-tools
 

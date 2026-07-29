@@ -4,21 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Estado actual del repo
 
-**Fases 0-4 completas.** `AdivinaQue.Engine` implementa la máquina de estados completa;
-`AdivinaQue.Contracts`/`AdivinaQue.PackTool` tienen el esquema y validador del content
-pack; `AdivinaQue.Server` tiene el `GameHub` de SignalR, gestión de salas con capacidad
-2 atómica, `IGameStore` (InMemory + Sqlite), QR, y un barrido de fondo que detecta
-timeouts sin que ningún cliente llame a nada. `AdivinaQue.Client` (Blazor WASM) tiene las
-4 pantallas completas (inicio, sala de espera con QR, tablero, fin de partida) contra el
-mazo placeholder de 16 cartas — verificado jugando una partida completa de punta a punta
-con dos contextos de navegador (Playwright), incluyendo reconexión y resync. 103 tests en
-verde en total (Engine + PackTool + Server, este último con integración real de dos
-clientes SignalR; el Client no suma un proyecto de tests de componentes, ver plan de Fase
-4). Fase 5 (mazo de bailes típicos de Chile) todavía no se ha empezado. Antes de escribir
-código de producto, revisa qué fase sigue en `docs/PROMPT-claude-code.md` — el trabajo
-está diseñado para ejecutarse **fase por fase, deteniéndose al final de cada una** para
-mostrar un resumen y esperar aprobación antes de continuar. No saltes fases ni las
-combines.
+**Fases 0-6 completas — spec de `docs/PROMPT-claude-code.md` cumplida de punta a punta.**
+`AdivinaQue.Engine` implementa la máquina de estados completa; `AdivinaQue.Contracts`/
+`AdivinaQue.PackTool` tienen el esquema y validador del content pack; `AdivinaQue.Server`
+tiene el `GameHub` de SignalR, gestión de salas con capacidad 2 atómica, `IGameStore`
+(InMemory + Sqlite), QR, y un barrido de fondo que detecta timeouts sin que ningún
+cliente llame a nada. `AdivinaQue.Client` (Blazor WASM) tiene las 4 pantallas completas
+(inicio, sala de espera con QR, tablero, fin de partida) — verificado jugando una
+partida completa de punta a punta con dos contextos de navegador (Playwright), incluyendo
+reconexión y resync. `content/bailes-chile/pack.json` es un **borrador** de 24 cartas
+(pasa el validador, pendiente de verificación humana de los hechos folclóricos — ver
+`content/bailes-chile/MATRIZ-VERIFICACION.md`) contra el que el Client todavía no está
+conectado (sigue sirviendo el mazo placeholder de 16 cartas; conectar un pack real al
+Server es trabajo de infraestructura nuevo, no pedido explícitamente por ninguna fase).
+`docker-compose.yml` levanta el stack completo con Sqlite persistido en volumen —
+build y `docker compose up` verificados de punta a punta (imagen construida, contenedor
+sirviendo `/health` y `/` en 200, variables de entorno y volumen confirmados dentro del
+contenedor). 103 tests en verde en total (Engine + PackTool + Server, este último con
+integración real de dos clientes SignalR; el Client no suma un proyecto de tests de
+componentes, ver plan de Fase 4). Antes de escribir código de producto sobre este
+repo, revisa `docs/PROMPT-claude-code.md` para el contexto histórico de cada fase — el
+trabajo se ejecutó **fase por fase, deteniéndose al final de cada una** para mostrar un
+resumen y esperar aprobación antes de continuar; cualquier trabajo nuevo a partir de acá
+ya no tiene fases predefinidas en ese documento.
 
 ## Comandos
 
@@ -32,8 +40,16 @@ dotnet test --filter "FullyQualifiedName~NombreTest"  # un test puntual
 dotnet run --project src/AdivinaQue.Server            # levanta servidor + Blazor WASM (hosted)
 dotnet run --project src/AdivinaQue.PackTool -- validate <ruta-a-pack.json>  # valida un pack y emite reporte
 docker build .                                        # imagen multi-stage (pesado: instala workload wasm-tools)
-docker compose up                                     # entorno local completo, agregado en Fase 6
+docker compose up                                     # entorno local completo: server + Sqlite persistido, puerto 5299 (override: ADIVINAQUE_PORT)
 ```
+
+Detalle de variables de entorno y qué proveedores de hosting sirven (y cuáles rompen
+WebSockets por dormir el contenedor) vive en `README.md`, no acá, para no duplicar.
+
+**Nota del Dockerfile:** la imagen base del SDK no trae `python`, que el paso de
+compilación nativa de emscripten (WASM) exige al publicar en Release — sin
+`python-is-python3` instalado, `dotnet publish` falla recién al final del build (tras
+instalar todo el workload `wasm-tools`) con "unable to find python in $PATH".
 
 El archivo de solución es `AdivinaQue.slnx` (formato XML nuevo, no el `.sln` clásico) —
 `dotnet build`/`dotnet test` lo detectan solos sin pasar la ruta.

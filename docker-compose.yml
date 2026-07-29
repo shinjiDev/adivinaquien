@@ -1,0 +1,22 @@
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${ADIVINAQUE_PORT:-5299}:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - Storage__Provider=Sqlite
+      - Storage__SqliteConnectionString=Data Source=/data/adivinaque.db
+      - Match__AnswerTimeoutSeconds=60
+      - Match__DisconnectGraceSeconds=120
+      - Match__WrongGuessPolicy=EndsMatch
+      - Room__TtlMinutes=30
+      - Room__SweepIntervalSeconds=1
+    volumes:
+      - adivinaque-data:/data
+    restart: unless-stopped
+
+volumes:
+  adivinaque-data:
