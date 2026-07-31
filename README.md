@@ -19,6 +19,19 @@ dotnet test --filter "FullyQualifiedName~NombreTest"  # un test puntual
 dotnet run --project src/AdivinaQue.Server            # levanta servidor + cliente Blazor (hosted), http://localhost:5299 por defecto
 ```
 
+**Azurite (opcional):** los tests de `TableStorageGameStore` (el `IGameStore` de
+producción en Azure, ver Fase 1 del despliegue) corren contra un Azurite real, no un
+mock. Si Azurite no está corriendo, esos tests se **saltan** automáticamente (no
+fallan) con un mensaje explicando cómo instalarlo:
+
+```
+npm install -g azurite
+azurite --skipApiVersionCheck --location <carpeta-para-los-datos>
+```
+
+`--skipApiVersionCheck` es necesario si tu versión de Azurite es más antigua que la API
+que usa el SDK de `Azure.Data.Tables`/`Azure.Storage.Blobs` instalado.
+
 El archivo de solución es `AdivinaQue.slnx`; `dotnet build`/`dotnet test` lo detectan
 solos, sin pasar la ruta.
 
@@ -64,13 +77,28 @@ bajo `__` como separador de sección, convención estándar de ASP.NET Core):
 
 | Variable | Valores | Default | Qué hace |
 |---|---|---|---|
-| `Storage__Provider` | `InMemory` \| `Sqlite` | `InMemory` | Backend de persistencia de salas. `InMemory` no sobrevive un reinicio del proceso — solo sirve para desarrollo. |
+| `Storage__Provider` | `InMemory` \| `Sqlite` \| `Table` | `InMemory` | Backend de persistencia de salas. `InMemory` no sobrevive un reinicio del proceso — solo sirve para desarrollo. `Table` es Azure Table Storage (producción en Container Apps, ver más abajo). |
 | `Storage__SqliteConnectionString` | connection string de SQLite | `Data Source=adivinaque.db` | Solo aplica si `Storage__Provider=Sqlite`. |
+| `Storage__TableConnectionString` | connection string de Storage | — | Solo si `Storage__Provider=Table`: para Azurite/desarrollo local. En producción no se usa (ver `Storage__TableEndpoint`). |
+| `Storage__TableEndpoint` | URL del servicio Table | — | Solo si `Storage__Provider=Table` y no hay `Storage__TableConnectionString`: endpoint real de la cuenta de Storage, autenticado sin secretos vía managed identity. |
+| `Storage__BlobConnectionString` / `Storage__BlobEndpoint` | igual que las de Table | — | Mismo esquema, pero para el blob donde se persisten las claves de Data Protection (`Storage__Provider=Table`). |
+| `Storage__ManagedIdentityClientId` | GUID | — | Client ID de la identidad administrada asignada por el usuario (Container Apps). Si se omite, usa `DefaultAzureCredential`. |
 | `Match__AnswerTimeoutSeconds` | entero | `60` | Segundos para responder una pregunta antes de que el motor la marque expirada. |
 | `Match__DisconnectGraceSeconds` | entero | `120` | Segundos de gracia tras una desconexión antes de dar la partida por abandonada. |
 | `Match__WrongGuessPolicy` | `EndsMatch` | `EndsMatch` | Qué pasa si un jugador adivina mal. |
 | `Room__TtlMinutes` | entero | `30` | Minutos de inactividad antes de que el barrido de fondo elimine una sala. |
 | `Room__SweepIntervalSeconds` | entero | `1` | Frecuencia del barrido de fondo que detecta timeouts. |
+
+## Despliegue en Azure Container Apps (costo cero)
+
+Trabajo en curso — ver
+`C:\Users\ChristianPalomares\.claude\plans\dynamic-sniffing-whale.md` para el plan
+completo y qué fases están hechas. Fase 0 (red de seguridad financiera: budget de 1
+USD/mes + verificación del límite de gasto de la suscripción) y Fase 1 (cambios en la
+app: `/healthz` real, `TableStorageGameStore`, `ForwardedHeaders`, apagado ordenado,
+reintento de arranque en frío, ReadyToRun) ya están aplicadas y verificadas. La
+infraestructura Bicep completa y los scripts de despliegue (`infra/`, `scripts/
+deploy.*`) todavía no existen — eso es Fase 2-3 del plan.
 
 ## Despliegue: qué proveedores sirven y cuáles no
 

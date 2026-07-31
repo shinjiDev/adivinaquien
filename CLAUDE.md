@@ -34,9 +34,50 @@ aleatoria**: `Match.SetReady` lleva a ambos jugadores a `GameStatus.Setup` (pant
 el rival debe adivinar — la partida recién pasa a `InTurn` cuando ambos eligieron. Ver
 `ChooseCharacter` en `Match.cs` y el hub method homónimo en `GameHub.cs`.
 `content/characters/pack.json` pasa el validador de `AdivinaQue.PackTool` con 0 errores.
-110 tests en verde en total (Engine + PackTool + Server, este último con integración real
-de dos clientes SignalR contra el mazo real de 16 personajes; el Client no suma un
-proyecto de tests de componentes, ver plan de Fase 4).
+
+**Preparación para desplegar en Azure Container Apps (costo cero), Fase 0-1 de
+`C:\Users\ChristianPalomares\.claude\plans\dynamic-sniffing-whale.md`:**
+- **Fase 0** (red de seguridad financiera): `infra/main.bicep` + `infra/modules/budget.bicep`
+  crean un budget de 1 USD/mes (`Microsoft.CostManagement/budgets@2025-03-01`, alertas
+  50/90/100%) — ya aplicado contra Azure real (resource group `rg-adivinaquien-prod` en
+  `brazilsouth`). `scripts/preflight-budget-check.{sh,ps1}` verifica el "límite de gasto"
+  de la suscripción (`subscriptionPolicies.spendingLimit` vía `az rest`, no hay
+  subcomando dedicado) y aborta si está `Off`/`CurrentPeriodOff` — solo aplica a
+  suscripciones con crédito (Free Trial/Students/Visual Studio), en Pay-As-You-Go no
+  existe ese mecanismo y el script lo señala explícitamente en vez de fallar oscuro.
+- **Fase 1** (cambios en la app, antes de que la infra tenga sentido):
+  - `/healthz` (real, contra `IGameStore.PingAsync`) vive junto a `/health` (liveness
+    trivial preexistente) — la sonda de Container Apps usa la primera.
+  - `TableStorageGameStore` (nueva implementación de `IGameStore`, mismo patrón JSON-por-fila
+    que `SqliteGameStore`) — verificada con tests reales contra Azurite, no solo compilada.
+    Activada con `Storage:Provider=Table`; auth sin secretos vía `Storage:TableEndpoint` +
+    managed identity (`Storage:ManagedIdentityClientId`), o `Storage:TableConnectionString`
+    para Azurite/desarrollo local.
+  - `ForwardedHeaders` (XForwardedProto/XForwardedHost, `KnownNetworks`/`KnownProxies`
+    limpiados) — necesario para que `QrEndpoints` arme el deep link con el scheme/host
+    públicos detrás del ingress de Container Apps, no los internos del contenedor.
+  - `GracefulShutdownService` (nuevo `IHostedService`, mismo patrón de registro que
+    `RoomActivityMonitor` — también inyectable por su tipo concreto para tests) emite
+    `EventNames.ServerShuttingDown` a cada sala activa en `StopAsync`, antes de que el
+    autoescalado a cero termine el proceso.
+  - `GameClient.ConnectAsync` (Client) envuelve el primer `StartAsync` en su propio
+    reintento con backoff (hasta 2 min) — `WithAutomaticReconnect` de SignalR solo
+    reintenta caídas post-conexión, no el intento inicial. `GameClient.IsWakingUp`
+    dispara el banner "Despertando el servidor…" en `MainLayout`.
+  - Publish con `-p:EnableReadyToRun=true` (ver `AdivinaQue.Server.csproj`: el
+    `RuntimeIdentifier`/`SelfContained`/`PublishReadyToRun` van condicionados a esa
+    property propia DENTRO del csproj, no como `-r`/`--self-contained` en la línea de
+    comandos del Dockerfile, porque esas sí son properties conocidas por todo el SDK y
+    se filtran a `AdivinaQue.Client.csproj` referenciado, chocando con su propio
+    trimming de Blazor WASM). Medido en un contenedor real: **~0.42-0.52s** desde que
+    arranca el proceso hasta el primer `200` en `/healthz`.
+  - Data Protection persiste sus claves en un blob (`dataprotection-keys/keys.xml`) de
+    la misma storage account cuando `Storage:Provider=Table` — mismo esquema de
+    configuración que Table Storage (`Storage:BlobEndpoint`/`Storage:BlobConnectionString`).
+
+124 tests en verde en total (Engine + PackTool + Server, este último con integración real
+de dos clientes SignalR contra el mazo real de 16 personajes y contra Azurite para
+Table Storage; el Client no suma un proyecto de tests de componentes, ver plan de Fase 4).
 
 ## Comandos
 
@@ -64,7 +105,7 @@ instalar todo el workload `wasm-tools`) con "unable to find python in $PATH".
 El archivo de solución es `AdivinaQue.slnx` (formato XML nuevo, no el `.sln` clásico) —
 `dotnet build`/`dotnet test` lo detectan solos sin pasar la ruta.
 
-El Server lee `Storage:Provider` (`InMemory`|`Sqlite`), `Match:AnswerTimeoutSeconds`,
+El Server lee `Storage:Provider` (`InMemory`|`Sqlite`|`Table`), `Match:AnswerTimeoutSeconds`,
 `Match:DisconnectGraceSeconds`, `Match:WrongGuessPolicy`, `Room:TtlMinutes`,
 `Room:SweepIntervalSeconds`, `ContentPack:PackId` (default `characters`) y
 `ContentPack:RootDirectory` (default `../../content`, correcto para `dotnet run` local;
