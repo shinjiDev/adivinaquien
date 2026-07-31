@@ -3,24 +3,24 @@
 @inject GameClient GameClient
 @inject NavigationManager Navigation
 
-<PageTitle>Sala @Code</PageTitle>
+<PageTitle>Room @Code</PageTitle>
 
 @if (_error is not null)
 {
     <div class="home-screen">
         <p class="text-danger">@_error</p>
-        <a class="btn btn-primary" href="/">Volver al inicio</a>
+        <a class="btn btn-primary" href="/">Back to home</a>
     </div>
 }
 else if (GameClient.RoomCode is null)
 {
-    <p>Conectando…</p>
+    <p>Connecting…</p>
 }
 else if (GameClient.Projection is null)
 {
-    @* Solo en la sala, esperando al segundo jugador: todavía no hay Match ni
-       Projection (recién se crean cuando la sala se llena), así que esta rama
-       muestra la sala de espera sin depender del estado del motor. *@
+    @* Alone in the room, waiting for the second player: there's no Match/Projection
+       yet (only created once the room fills up), so this branch shows the waiting
+       room without depending on engine state. *@
     <ConnectionStatusBadge />
     <WaitingRoomView Code="@Code" />
 }
@@ -41,8 +41,8 @@ else
             break;
         case GameStatusDto.Abandoned:
             <div class="home-screen">
-                <p>Esta sala fue abandonada.</p>
-                <a class="btn btn-primary" href="/">Volver al inicio</a>
+                <p>This room was abandoned.</p>
+                <a class="btn btn-primary" href="/">Back to home</a>
             </div>
             break;
         default:
@@ -66,7 +66,7 @@ else
 
         if (!ok)
         {
-            _error = GameClient.LastError?.Message ?? "No se pudo entrar a la sala.";
+            _error = GameClient.LastError?.Message ?? "Could not enter the room.";
         }
     }
 

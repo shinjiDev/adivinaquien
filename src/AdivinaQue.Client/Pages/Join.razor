@@ -2,19 +2,19 @@
 @inject GameClient GameClient
 @inject NavigationManager Navigation
 
-<PageTitle>Unirse a sala @Code</PageTitle>
+<PageTitle>Join room @Code</PageTitle>
 
 <div class="home-screen">
-    <h1>Sala @Code</h1>
+    <h1>Room @Code</h1>
 
     @if (_error is null)
     {
-        <p>Uniéndote a la sala…</p>
+        <p>Joining the room…</p>
     }
     else
     {
         <p class="text-danger">@_error</p>
-        <a class="btn btn-primary" href="/">Volver al inicio</a>
+        <a class="btn btn-primary" href="/">Back to home</a>
     }
 </div>
 
@@ -35,7 +35,7 @@
         }
         else
         {
-            _error = GameClient.LastError?.Message ?? "No se pudo unir a la sala.";
+            _error = GameClient.LastError?.Message ?? "Could not join the room.";
         }
     }
 }

@@ -1,24 +1,41 @@
 @implements IDisposable
 @inject GameClient GameClient
+@inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
 
 <div class="waiting-room">
-    <h2>Sala @Code</h2>
-    <img class="qr" src="@QrUrl" alt="Código QR para unirse" />
+    <h2>Room @Code</h2>
+    <p class="muted">Share this QR code or the room code so a friend can join.</p>
+    <img class="qr" src="@QrUrl" alt="QR code to join the room" />
     <p class="code-display">@Code</p>
+
+    <div class="share-actions">
+        @if (_canShare)
+        {
+            <button class="btn btn-primary w-100" @onclick="ShareAsync">Share invite</button>
+        }
+        <button class="btn btn-outline-primary w-100" @onclick="CopyLinkAsync">Copy join link</button>
+        <button class="btn btn-outline-primary w-100" @onclick="CopyCodeAsync">Copy code</button>
+    </div>
+
+    @if (_copiedMessage is not null)
+    {
+        <p class="copied-feedback">@_copiedMessage</p>
+    }
 
     <p>@PlayersText</p>
 
     @if (GameClient.RoomPlayerIds.Count < 2)
     {
-        <p class="muted">El botón "Estoy listo" aparece cuando el segundo jugador se una.</p>
+        <p class="muted">The "I'm ready" button appears once the second player joins.</p>
     }
     else if (!_readyClicked)
     {
-        <button class="btn btn-primary btn-lg w-100" @onclick="ReadyAsync">Estoy listo</button>
+        <button class="btn btn-primary btn-lg w-100" @onclick="ReadyAsync">I'm ready</button>
     }
     else
     {
-        <p>Esperando al otro jugador…</p>
+        <p>Waiting for the other player…</p>
     }
 </div>
 
@@ -27,8 +44,14 @@
     public string Code { get; set; } = string.Empty;
 
     private bool _readyClicked;
+    private bool _canShare;
+    private string? _copiedMessage;
 
-    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+    protected override async Task OnInitializedAsync()
+    {
+        GameClient.Changed += OnChanged;
+        _canShare = await JsRuntime.InvokeAsync<bool>("blazorInterop.canShare");
+    }
 
     private void OnChanged() => InvokeAsync(StateHasChanged);
 
@@ -36,10 +59,12 @@
 
     private string QrUrl => $"/rooms/{Code}/qr";
 
+    private string JoinUrl => $"{Navigation.BaseUri}join/{Code}";
+
     private string PlayersText => GameClient.RoomPlayerIds.Count switch
     {
-        1 => "Esperando al segundo jugador…",
-        2 => "Los dos jugadores están en la sala.",
+        1 => "Waiting for the second player…",
+        2 => "Both players are in the room.",
         _ => string.Empty,
     };
 
@@ -47,5 +72,32 @@
     {
         _readyClicked = true;
         await GameClient.SetReadyAsync();
+    }
+
+    private Task ShareAsync() => JsRuntime.InvokeAsync<bool>(
+        "blazorInterop.share",
+        "Guess Who? Chilean historical characters",
+        $"Join my game with code {Code}!",
+        JoinUrl).AsTask();
+
+    private async Task CopyLinkAsync()
+    {
+        var ok = await JsRuntime.InvokeAsync<bool>("blazorInterop.copyText", JoinUrl);
+        await ShowCopiedFeedbackAsync(ok, "Link copied!");
+    }
+
+    private async Task CopyCodeAsync()
+    {
+        var ok = await JsRuntime.InvokeAsync<bool>("blazorInterop.copyText", Code);
+        await ShowCopiedFeedbackAsync(ok, "Code copied!");
+    }
+
+    private async Task ShowCopiedFeedbackAsync(bool ok, string successMessage)
+    {
+        _copiedMessage = ok ? successMessage : "Could not copy — try selecting it manually.";
+        StateHasChanged();
+        await Task.Delay(2000);
+        _copiedMessage = null;
+        StateHasChanged();
     }
 }

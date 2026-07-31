@@ -1,79 +1,79 @@
 {
   "packId": "characters",
-  "nombre": "Personajes históricos de Chile",
-  "descripcion": "Mazo de 16 figuras históricas y culturales de Chile para 'Adivina Quién'. Contenido generado con asistencia de un modelo de lenguaje a partir de hechos ampliamente documentados; las cartas con el campo '_verificar' señalan las pocas clasificaciones que son juicio interpretativo (no el hecho biográfico en sí) y conviene que una persona las revise antes de publicar.",
-  "idioma": "es-CL",
-  "version": "0.1.0",
+  "nombre": "Chilean historical characters",
+  "descripcion": "A deck of 16 historical and cultural figures from Chile for 'Guess Who?'. Content generated with the assistance of a language model based on widely documented facts; cards with the '_verificar' field flag the few classifications that are interpretive judgment calls (not the biographical fact itself), and a human should review them before publishing.",
+  "idioma": "en",
+  "version": "0.2.0",
   "atributos": [
     {
       "id": "es_mujer",
       "tipo": "booleano",
-      "etiqueta": "Mujer",
-      "pregunta": "¿Es una mujer?"
+      "etiqueta": "Woman",
+      "pregunta": "Is this a woman?"
     },
     {
       "id": "epoca",
       "tipo": "ordinal",
-      "etiqueta": "Época",
+      "etiqueta": "Era",
       "valores": [
-        { "id": "hasta_1830", "etiqueta": "Colonia e independencia (hasta 1830)", "pregunta": "¿Vivió principalmente antes de 1830 (colonia o independencia)?", "orden": 1 },
-        { "id": "siglo_19_republicano", "etiqueta": "República del siglo XIX", "pregunta": "¿Vivió principalmente entre 1830 y 1899?", "orden": 2 },
-        { "id": "siglo_20_y_21", "etiqueta": "Siglo XX y XXI", "pregunta": "¿Vivió principalmente durante el siglo XX o XXI?", "orden": 3 }
+        { "id": "hasta_1830", "etiqueta": "Colonial era & independence (up to 1830)", "pregunta": "Did they live mainly before 1830 (colonial era or independence)?", "orden": 1 },
+        { "id": "siglo_19_republicano", "etiqueta": "19th-century Republic", "pregunta": "Did they live mainly between 1830 and 1899?", "orden": 2 },
+        { "id": "siglo_20_y_21", "etiqueta": "20th & 21st century", "pregunta": "Did they live mainly during the 20th or 21st century?", "orden": 3 }
       ]
     },
     {
       "id": "es_militar",
       "tipo": "booleano",
-      "etiqueta": "Militar",
-      "pregunta": "¿Tuvo un rol militar destacado?"
+      "etiqueta": "Military",
+      "pregunta": "Did they have a notable military role?"
     },
     {
       "id": "es_figura_politica",
       "tipo": "booleano",
-      "etiqueta": "Política",
-      "pregunta": "¿Tuvo un rol político destacado (gobierno, independencia, activismo)?"
+      "etiqueta": "Politics",
+      "pregunta": "Did they have a notable political role (government, independence, activism)?"
     },
     {
       "id": "es_escritor",
       "tipo": "booleano",
-      "etiqueta": "Escritor/a",
-      "pregunta": "¿Es reconocido/a principalmente como escritor/a?"
+      "etiqueta": "Writer",
+      "pregunta": "Are they mainly known as a writer?"
     },
     {
       "id": "tiene_bigote",
       "tipo": "booleano",
-      "etiqueta": "Bigote",
-      "pregunta": "¿Tiene bigote en su retrato?"
+      "etiqueta": "Mustache",
+      "pregunta": "Does their portrait have a mustache?"
     },
     {
       "id": "usa_tocado_o_casco",
       "tipo": "booleano",
-      "etiqueta": "Tocado o casco",
-      "pregunta": "¿Lleva sombrero, gorro, casco o tocado en su retrato?"
+      "etiqueta": "Headwear or helmet",
+      "pregunta": "Are they wearing a hat, cap, helmet, or headdress in their portrait?"
     },
     {
       "id": "aparece_uniforme_armadura",
       "tipo": "booleano",
-      "etiqueta": "Uniforme o armadura",
-      "pregunta": "¿Aparece con uniforme militar o armadura en su retrato?"
+      "etiqueta": "Uniform or armor",
+      "pregunta": "Do they appear in a military uniform or armor in their portrait?"
     },
     {
       "id": "retrato_a_color",
       "tipo": "booleano",
-      "etiqueta": "Retrato a color",
-      "pregunta": "¿Su retrato está a color (no en blanco y negro)?"
+      "etiqueta": "Color portrait",
+      "pregunta": "Is their portrait in color (not black and white)?"
     },
     {
       "id": "tiene_pelo_largo",
       "tipo": "booleano",
-      "etiqueta": "Pelo largo",
-      "pregunta": "¿Tiene el pelo notoriamente largo en su retrato?"
+      "etiqueta": "Long hair",
+      "pregunta": "Is their hair noticeably long in their portrait?"
     },
     {
       "id": "murio_tragico_o_politico",
       "tipo": "booleano",
-      "etiqueta": "Muerte trágica o política",
-      "pregunta": "¿Murió en circunstancias trágicas o de violencia política (combate, atentado, represión)?"
+      "etiqueta": "Tragic or political death",
+      "pregunta": "Did they die in tragic circumstances or political violence (combat, assassination, repression)?"
     }
   ],
   "cartas": [
@@ -82,24 +82,24 @@
       "nombre": "Bernardo O'Higgins",
       "imagen": "img/ohiggins.png",
       "atributos": { "es_mujer": false, "epoca": "hasta_1830", "es_militar": true, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": true, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Prócer de la independencia de Chile y primer Director Supremo del país (1817-1823), conocido como 'Padre de la Patria'.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Founding father of Chile's independence and the country's first Supreme Director (1817-1823), known as the 'Father of the Nation'.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "jose-miguel-carrera",
       "nombre": "José Miguel Carrera",
       "imagen": "img/jose-miguel-carrera.png",
       "atributos": { "es_mujer": false, "epoca": "hasta_1830", "es_militar": true, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": true, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": true },
-      "ficha": "Militar y político, uno de los principales líderes de la independencia y rival histórico de O'Higgins; fue fusilado en Mendoza en 1821.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Military leader and politician, one of the main leaders of the independence movement and historical rival of O'Higgins; he was executed by firing squad in Mendoza in 1821.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "javiera-carrera",
       "nombre": "Javiera Carrera",
       "imagen": "img/javiera-carrera.png",
       "atributos": { "es_mujer": true, "epoca": "hasta_1830", "es_militar": false, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": true, "tiene_pelo_largo": true, "murio_tragico_o_politico": false },
-      "ficha": "Activista política de la independencia, hermana de José Miguel Carrera, célebre por confeccionar la primera bandera nacional y organizar la resistencia patriota.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena.",
+      "ficha": "Political activist of the independence movement, sister of José Miguel Carrera, famous for sewing the first national flag and organizing patriot resistance.",
+      "fuente": "Historical fact widely documented in Chilean historiography.",
       "_verificar": ["es_figura_politica"]
     },
     {
@@ -107,24 +107,24 @@
       "nombre": "Manuel Rodríguez",
       "imagen": "img/manuel-rodriguez.png",
       "atributos": { "es_mujer": false, "epoca": "hasta_1830", "es_militar": true, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": true },
-      "ficha": "Abogado y guerrillero de la independencia, célebre por su labor de espionaje y resistencia tras el desastre de Rancagua; fue asesinado en 1818.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Lawyer and guerrilla fighter of the independence movement, famous for his espionage and resistance work after the disaster of Rancagua; he was assassinated in 1818.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "arturo-prat",
       "nombre": "Arturo Prat",
       "imagen": "img/arturo-prat.png",
       "atributos": { "es_mujer": false, "epoca": "siglo_19_republicano", "es_militar": true, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": true, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": true, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": true },
-      "ficha": "Oficial naval, héroe del Combate Naval de Iquique (1879) durante la Guerra del Pacífico, donde murió abordando el Huáscar.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Naval officer, hero of the Naval Battle of Iquique (1879) during the War of the Pacific, where he died while boarding the Huáscar.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "andres-bello",
       "nombre": "Andrés Bello",
       "imagen": "img/andres-bello.png",
       "atributos": { "es_mujer": false, "epoca": "siglo_19_republicano", "es_militar": false, "es_figura_politica": false, "es_escritor": true, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Humanista, jurista y educador venezolano-chileno; redactó el Código Civil de Chile y fue el primer rector de la Universidad de Chile.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena.",
+      "ficha": "Venezuelan-Chilean humanist, jurist, and educator; he drafted Chile's Civil Code and was the first rector of the University of Chile.",
+      "fuente": "Historical fact widely documented in Chilean historiography.",
       "_verificar": ["es_escritor"]
     },
     {
@@ -132,80 +132,80 @@
       "nombre": "Eloísa Díaz",
       "imagen": "img/eloisa-diaz.png",
       "atributos": { "es_mujer": true, "epoca": "siglo_19_republicano", "es_militar": false, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Primera mujer en obtener el título de médico-cirujano en Chile (1887) y pionera de la medicina y la salud escolar en el país.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "First woman to earn a medical degree in Chile (1887) and a pioneer of medicine and school health in the country.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "gabriela-mistral",
       "nombre": "Gabriela Mistral",
       "imagen": "img/gabriela-mistral.png",
       "atributos": { "es_mujer": true, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": false, "es_escritor": true, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Poeta y diplomática, primera persona latinoamericana en recibir el Premio Nobel de Literatura (1945).",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Poet and diplomat, the first Latin American person to receive the Nobel Prize in Literature (1945).",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "pablo-neruda",
       "nombre": "Pablo Neruda",
       "imagen": "img/pablo-neruda.png",
       "atributos": { "es_mujer": false, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": true, "es_escritor": true, "tiene_bigote": false, "usa_tocado_o_casco": true, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Poeta, diplomático y senador; ganó el Premio Nobel de Literatura en 1971.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Poet, diplomat, and senator; he won the Nobel Prize in Literature in 1971.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "violeta-parra",
       "nombre": "Violeta Parra",
       "imagen": "img/violeta-parra.png",
       "atributos": { "es_mujer": true, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": true, "murio_tragico_o_politico": false },
-      "ficha": "Folclorista, cantautora y artista visual, referente de la música popular chilena y compositora de 'Gracias a la vida'.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Folklorist, singer-songwriter, and visual artist, a leading figure of Chilean popular music and composer of 'Gracias a la Vida'.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "victor-jara",
       "nombre": "Víctor Jara",
       "imagen": "img/victor-jara.png",
       "atributos": { "es_mujer": false, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": false, "murio_tragico_o_politico": true },
-      "ficha": "Cantautor y director de teatro, figura central de la Nueva Canción Chilena; fue asesinado tras el golpe de Estado de 1973.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Singer-songwriter and theater director, a central figure of the Chilean New Song movement; he was killed following the 1973 coup d'état.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "salvador-allende",
       "nombre": "Salvador Allende",
       "imagen": "img/salvador-allende.png",
       "atributos": { "es_mujer": false, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": true, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": false, "murio_tragico_o_politico": true },
-      "ficha": "Médico y político, presidente de Chile entre 1970 y 1973; murió el día del golpe de Estado del 11 de septiembre de 1973.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Physician and politician, president of Chile between 1970 and 1973; he died on the day of the coup d'état on September 11, 1973.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "michelle-bachelet",
       "nombre": "Michelle Bachelet",
       "imagen": "img/michelle-bachelet.png",
       "atributos": { "es_mujer": true, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": true, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Médica y política, primera mujer presidenta de Chile (2006-2010 y 2014-2018).",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Physician and politician, the first woman to serve as president of Chile (2006-2010 and 2014-2018).",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "isabel-allende",
       "nombre": "Isabel Allende",
       "imagen": "img/isabel-allende.png",
       "atributos": { "es_mujer": true, "epoca": "siglo_20_y_21", "es_militar": false, "es_figura_politica": false, "es_escritor": true, "tiene_bigote": false, "usa_tocado_o_casco": false, "aparece_uniforme_armadura": false, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Escritora chilena de fama internacional, autora de 'La casa de los espíritus'; sobrina de Salvador Allende.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Internationally renowned Chilean writer, author of 'The House of the Spirits'; niece of Salvador Allende.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "pedro-de-valdivia",
       "nombre": "Pedro de Valdivia",
       "imagen": "img/pedro-de-valdivia.png",
       "atributos": { "es_mujer": false, "epoca": "hasta_1830", "es_militar": true, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": true, "usa_tocado_o_casco": true, "aparece_uniforme_armadura": true, "retrato_a_color": true, "tiene_pelo_largo": false, "murio_tragico_o_politico": false },
-      "ficha": "Conquistador español, fundador de Santiago en 1541 y primer gobernador de Chile bajo la Corona española.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena."
+      "ficha": "Spanish conquistador, founder of Santiago in 1541 and the first governor of Chile under the Spanish Crown.",
+      "fuente": "Historical fact widely documented in Chilean historiography."
     },
     {
       "id": "caupolican",
       "nombre": "Caupolicán",
       "imagen": "img/caupolican.png",
       "atributos": { "es_mujer": false, "epoca": "hasta_1830", "es_militar": true, "es_figura_politica": false, "es_escritor": false, "tiene_bigote": false, "usa_tocado_o_casco": true, "aparece_uniforme_armadura": false, "retrato_a_color": false, "tiene_pelo_largo": true, "murio_tragico_o_politico": true },
-      "ficha": "Toqui mapuche que lideró la resistencia contra la conquista española; capturado y ejecutado por los españoles hacia 1558.",
-      "fuente": "Hecho histórico ampliamente documentado en la historiografía chilena.",
+      "ficha": "Mapuche toqui (war leader) who led the resistance against the Spanish conquest; captured and executed by the Spanish around 1558.",
+      "fuente": "Historical fact widely documented in Chilean historiography.",
       "_verificar": ["usa_tocado_o_casco"]
     }
   ]

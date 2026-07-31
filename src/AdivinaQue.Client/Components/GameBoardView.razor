@@ -15,44 +15,44 @@
         <div class="banner warn">
             @if (opponentPaused)
             {
-                <span>Tu rival se desconectó. Esperando que vuelva…</span>
+                <span>Your rival disconnected. Waiting for them to come back…</span>
             }
             else
             {
-                <span>Reconectando…</span>
+                <span>Reconnecting…</span>
             }
             @if (GameClient.OpponentDisconnectSecondsRemaining is { } secs)
             {
-                <span> (@((int)secs)s de gracia)</span>
+                <span> (@((int)secs)s grace period)</span>
             }
         </div>
     }
 
     <div class="turn-banner @(isActivePlayer ? "yours" : "")">
-        @(isActivePlayer ? "Tu turno" : "Turno del rival") — @PhaseLabel(projection.Phase)
+        @(isActivePlayer ? "Your turn" : "Rival's turn") — @PhaseLabel(projection.Phase)
     </div>
 
     <div class="your-card">
-        <span>Tu carta:</span>
+        <span>Your character:</span>
         <strong>@(YourCardDisplayName(projection.YourCard))</strong>
     </div>
 
     @if (isActivePlayer && projection.Phase == TurnPhaseDto.AwaitingQuestion)
     {
         <form class="ask-form" @onsubmit="AskAsync" @onsubmit:preventDefault>
-            <textarea class="form-control" maxlength="200" placeholder="Escribe tu pregunta…" @bind="_questionText" @bind:event="oninput"></textarea>
+            <textarea class="form-control" maxlength="200" placeholder="Type your question…" @bind="_questionText" @bind:event="oninput"></textarea>
             <button class="btn btn-primary w-100 mt-2" type="submit" disabled="@(string.IsNullOrWhiteSpace(_questionText) || _busy)">
-                Preguntar
+                Ask
             </button>
         </form>
 
         <button class="btn @(_guessMode ? "btn-danger" : "btn-outline-danger") w-100 mt-2" @onclick="ToggleGuessMode">
-            @(_guessMode ? "Cancelar adivinanza" : "Adivinar carta")
+            @(_guessMode ? "Cancel guess" : "Guess character")
         </button>
     }
     else if (!isActivePlayer && projection.Phase == TurnPhaseDto.AwaitingQuestion)
     {
-        <p class="muted">Esperando la pregunta del rival…</p>
+        <p class="muted">Waiting for your rival's question…</p>
     }
     else if (projection.Phase == TurnPhaseDto.AwaitingAnswer)
     {
@@ -61,26 +61,26 @@
             <div class="pending-question">
                 <p>@pendingQuestion.Text</p>
                 <div class="answer-buttons">
-                    <button class="btn btn-success" @onclick='() => AnswerAsync(AnswerDto.Yes)' disabled="@_busy">Sí</button>
+                    <button class="btn btn-success" @onclick='() => AnswerAsync(AnswerDto.Yes)' disabled="@_busy">Yes</button>
                     <button class="btn btn-danger" @onclick='() => AnswerAsync(AnswerDto.No)' disabled="@_busy">No</button>
-                    <button class="btn btn-secondary" @onclick='() => AnswerAsync(AnswerDto.NotApplicable)' disabled="@_busy">No aplica</button>
+                    <button class="btn btn-secondary" @onclick='() => AnswerAsync(AnswerDto.NotApplicable)' disabled="@_busy">Not applicable</button>
                 </div>
             </div>
         }
         else
         {
-            <p class="muted">Esperando la respuesta del rival…</p>
+            <p class="muted">Waiting for your rival's answer…</p>
         }
     }
     else if (projection.Phase == TurnPhaseDto.AwaitingEliminations)
     {
         @if (isActivePlayer)
         {
-            <button class="btn btn-primary w-100" @onclick="EndTurnAsync" disabled="@_busy">Terminar turno</button>
+            <button class="btn btn-primary w-100" @onclick="EndTurnAsync" disabled="@_busy">End turn</button>
         }
         else
         {
-            <p class="muted">El rival está revisando su tablero…</p>
+            <p class="muted">Your rival is reviewing their board…</p>
         }
     }
 
@@ -95,10 +95,10 @@
     </div>
 
     <div class="history">
-        <h3>Historial</h3>
+        <h3>History</h3>
         @if (projection.History.Count == 0)
         {
-            <p class="muted">Todavía no hay preguntas.</p>
+            <p class="muted">No questions yet.</p>
         }
         else
         {
@@ -106,7 +106,7 @@
                 @foreach (var entry in projection.History.AsEnumerable().Reverse())
                 {
                     <li>
-                        <strong>@(entry.AskedByPlayerId == GameClient.PlayerId ? "Tú" : "Rival"):</strong>
+                        <strong>@(entry.AskedByPlayerId == GameClient.PlayerId ? "You" : "Rival"):</strong>
                         @entry.Text
                         <em>— @ResolutionLabel(entry.Resolution)</em>
                     </li>
@@ -132,19 +132,19 @@
 
     private static string PhaseLabel(TurnPhaseDto? phase) => phase switch
     {
-        TurnPhaseDto.AwaitingQuestion => "esperando pregunta",
-        TurnPhaseDto.AwaitingAnswer => "esperando respuesta",
-        TurnPhaseDto.AwaitingEliminations => "tachando cartas",
+        TurnPhaseDto.AwaitingQuestion => "awaiting question",
+        TurnPhaseDto.AwaitingAnswer => "awaiting answer",
+        TurnPhaseDto.AwaitingEliminations => "crossing out characters",
         _ => string.Empty,
     };
 
     private static string ResolutionLabel(QuestionResolutionDto? resolution) => resolution switch
     {
-        QuestionResolutionDto.Yes => "Sí",
+        QuestionResolutionDto.Yes => "Yes",
         QuestionResolutionDto.No => "No",
-        QuestionResolutionDto.NotApplicable => "No aplica",
-        QuestionResolutionDto.Expired => "sin responder (expiró)",
-        null => "esperando respuesta…",
+        QuestionResolutionDto.NotApplicable => "Not applicable",
+        QuestionResolutionDto.Expired => "unanswered (expired)",
+        null => "awaiting answer…",
         _ => string.Empty,
     };
 
@@ -176,7 +176,7 @@
     {
         if (_guessMode)
         {
-            var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "¿Seguro que quieres adivinar esta carta? Termina la partida.");
+            var confirmed = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to guess this character? This ends the game.");
             if (confirmed)
             {
                 _guessMode = false;

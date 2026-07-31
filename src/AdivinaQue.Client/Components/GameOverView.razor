@@ -8,27 +8,27 @@
 }
 
 <div class="game-over">
-    <h2>@(youWon ? "¡Ganaste!" : "Perdiste")</h2>
+    <h2>@(youWon ? "You won!" : "You lost")</h2>
     <p>@ReasonLabel(finish.Reason)</p>
 
     <div class="revealed-cards">
         <div>
-            <span>Tu carta</span>
+            <span>Your character</span>
             <CardTile Card="@finish.RevealedCards[GameClient.PlayerId!.Value]" />
         </div>
         <div>
-            <span>Carta del rival</span>
+            <span>Rival's character</span>
             <CardTile Card="@OpponentCard(finish)" />
         </div>
     </div>
 
     <div class="history">
-        <h3>Historial completo</h3>
+        <h3>Full history</h3>
         <ul>
             @foreach (var entry in projection.History)
             {
                 <li>
-                    <strong>@(entry.AskedByPlayerId == GameClient.PlayerId ? "Tú" : "Rival"):</strong>
+                    <strong>@(entry.AskedByPlayerId == GameClient.PlayerId ? "You" : "Rival"):</strong>
                     @entry.Text
                     <em>— @ResolutionLabel(entry.Resolution)</em>
                 </li>
@@ -36,7 +36,7 @@
         </ul>
     </div>
 
-    <a class="btn btn-primary w-100" href="/">Volver al inicio</a>
+    <a class="btn btn-primary w-100" href="/">Back to home</a>
 </div>
 
 @code {
@@ -51,20 +51,20 @@
 
     private static string ReasonLabel(FinishReasonDto reason) => reason switch
     {
-        FinishReasonDto.CorrectGuess => "Adivinó la carta correcta.",
-        FinishReasonDto.WrongGuess => "Adivinó la carta equivocada.",
-        FinishReasonDto.Forfeit => "El rival no volvió a tiempo tras desconectarse.",
-        FinishReasonDto.Timeout => "La partida terminó por tiempo.",
+        FinishReasonDto.CorrectGuess => "Guessed the correct character.",
+        FinishReasonDto.WrongGuess => "Guessed the wrong character.",
+        FinishReasonDto.Forfeit => "The rival didn't come back in time after disconnecting.",
+        FinishReasonDto.Timeout => "The game ended due to a timeout.",
         _ => string.Empty,
     };
 
     private static string ResolutionLabel(QuestionResolutionDto? resolution) => resolution switch
     {
-        QuestionResolutionDto.Yes => "Sí",
+        QuestionResolutionDto.Yes => "Yes",
         QuestionResolutionDto.No => "No",
-        QuestionResolutionDto.NotApplicable => "No aplica",
-        QuestionResolutionDto.Expired => "sin responder (expiró)",
-        null => "sin responder",
+        QuestionResolutionDto.NotApplicable => "Not applicable",
+        QuestionResolutionDto.Expired => "unanswered (expired)",
+        null => "unanswered",
         _ => string.Empty,
     };
 }

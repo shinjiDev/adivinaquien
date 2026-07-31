@@ -241,5 +241,5 @@ public sealed class GameHub : Hub
     }
 
     private Task SendInvalidRequestAsync() =>
-        _events.PushErrorAsync(Context.ConnectionId, new ErrorDto(WireErrorCode.InvalidRequest, "No estás en ninguna sala."));
+        _events.PushErrorAsync(Context.ConnectionId, new ErrorDto(WireErrorCode.InvalidRequest, "You are not in any room."));
 }

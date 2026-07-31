@@ -1,5 +1,25 @@
+/* Paleta pastel orientada a niños — solo colores, ver tarea de repintado. Cada
+   variable reemplaza un tono saturado "corporativo" (azules/rojos Bootstrap por
+   defecto) por su equivalente pastel, manteniendo contraste suficiente para texto. */
+:root {
+    --color-bg: #FFF8F0;
+    --color-text: #4A4458;
+    --color-primary: #7FCFE0;
+    --color-primary-dark: #4FADC7;
+    --color-secondary: #C9C2F0;
+    --color-secondary-dark: #A79CE0;
+    --color-success: #9BE0B0;
+    --color-success-dark: #6BC488;
+    --color-danger: #F7AFAF;
+    --color-danger-dark: #E88888;
+    --color-warning: #FFE7A0;
+    --color-warning-dark: #F0C868;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
 }
 
 h1:focus {
@@ -7,17 +27,85 @@ h1:focus {
 }
 
 a, .btn-link {
-    color: #0071c1;
+    color: var(--color-primary-dark);
 }
 
 .btn-primary {
-    color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    color: #33314d;
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+    .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+        background-color: var(--color-primary-dark) !important;
+        border-color: var(--color-primary-dark) !important;
+        color: #33314d !important;
+    }
+
+.btn-outline-primary {
+    color: var(--color-primary-dark);
+    border-color: var(--color-primary);
+}
+
+    .btn-outline-primary:hover, .btn-outline-primary:focus, .btn-outline-primary:active {
+        background-color: var(--color-primary) !important;
+        border-color: var(--color-primary) !important;
+        color: #33314d !important;
+    }
+
+.btn-secondary {
+    color: #33314d;
+    background-color: var(--color-secondary);
+    border-color: var(--color-secondary);
+}
+
+    .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active {
+        background-color: var(--color-secondary-dark) !important;
+        border-color: var(--color-secondary-dark) !important;
+        color: #33314d !important;
+    }
+
+.btn-success {
+    color: #234a30;
+    background-color: var(--color-success);
+    border-color: var(--color-success);
+}
+
+    .btn-success:hover, .btn-success:focus, .btn-success:active {
+        background-color: var(--color-success-dark) !important;
+        border-color: var(--color-success-dark) !important;
+        color: #234a30 !important;
+    }
+
+.btn-danger {
+    color: #5c2b2b;
+    background-color: var(--color-danger);
+    border-color: var(--color-danger);
+}
+
+    .btn-danger:hover, .btn-danger:focus, .btn-danger:active {
+        background-color: var(--color-danger-dark) !important;
+        border-color: var(--color-danger-dark) !important;
+        color: #5c2b2b !important;
+    }
+
+.btn-outline-danger {
+    color: var(--color-danger-dark);
+    border-color: var(--color-danger);
+}
+
+    .btn-outline-danger:hover, .btn-outline-danger:focus, .btn-outline-danger:active {
+        background-color: var(--color-danger) !important;
+        border-color: var(--color-danger) !important;
+        color: #5c2b2b !important;
+    }
+
+.text-danger {
+    color: var(--color-danger-dark) !important;
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--color-primary);
 }
 
 .content {
@@ -82,7 +170,7 @@ a, .btn-link {
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
+            stroke: var(--color-primary);
             stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
             transition: stroke-dasharray 0.05s ease-in-out;
         }
@@ -133,6 +221,18 @@ code {
         letter-spacing: 0.2rem;
     }
 
+.share-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+.copied-feedback {
+    color: var(--color-success-dark);
+    font-weight: 600;
+}
+
 .connection-badge {
     display: inline-block;
     font-size: 0.8rem;
@@ -142,13 +242,13 @@ code {
 }
 
     .connection-badge.ok {
-        background: #d4edda;
-        color: #155724;
+        background: var(--color-success);
+        color: #234a30;
     }
 
     .connection-badge.warn {
-        background: #fff3cd;
-        color: #856404;
+        background: var(--color-warning);
+        color: #6b5514;
     }
 
 .game-board {
@@ -164,8 +264,8 @@ code {
 }
 
     .banner.warn {
-        background: #fff3cd;
-        color: #856404;
+        background: var(--color-warning);
+        color: #6b5514;
     }
 
 .error-toast {
@@ -173,8 +273,8 @@ code {
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
-    background: #f8d7da;
-    color: #721c24;
+    background: var(--color-danger);
+    color: #5c2b2b;
     margin-bottom: 0.5rem;
 }
 
@@ -195,8 +295,8 @@ code {
 }
 
     .turn-banner.yours {
-        background: #1b6ec2;
-        color: #fff;
+        background: var(--color-primary);
+        color: #33314d;
     }
 
 .your-card {
@@ -264,8 +364,8 @@ code {
     }
 
     .card-tile.selected {
-        border: 3px solid #0d6efd;
-        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+        border: 3px solid var(--color-primary-dark);
+        box-shadow: 0 0 0 2px rgba(79, 173, 199, 0.25);
     }
 
     .card-tile-img {

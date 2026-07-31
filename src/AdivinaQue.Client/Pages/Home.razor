@@ -2,21 +2,21 @@
 @inject GameClient GameClient
 @inject NavigationManager Navigation
 
-<PageTitle>AdivinaQue</PageTitle>
+<PageTitle>Guess Who? Chilean historical characters</PageTitle>
 
 <div class="home-screen">
-    <h1>AdivinaQue</h1>
-    <p class="lead">Adivina la carta secreta de tu rival, entre dos jugadores.</p>
+    <h1>Guess Who?</h1>
+    <p class="lead">Guess your rival's secret character — Chilean historical characters, 2 players.</p>
 
     <button class="btn btn-primary btn-lg w-100 mb-4" @onclick="CreateAsync" disabled="@_busy">
-        Crear sala
+        Create room
     </button>
 
     <form @onsubmit="JoinAsync" @onsubmit:preventDefault>
-        <label for="code" class="form-label">Unirse con código</label>
+        <label for="code" class="form-label">Join with a code</label>
         <input id="code" class="form-control text-uppercase mb-2" maxlength="6" @bind="_code" placeholder="ABC123" />
         <button type="submit" class="btn btn-outline-primary w-100" disabled="@(_busy || string.IsNullOrWhiteSpace(_code))">
-            Unirse
+            Join
         </button>
     </form>
 
@@ -44,7 +44,7 @@
         }
         else
         {
-            _error = "No se pudo crear la sala.";
+            _error = "Could not create the room.";
         }
     }
 
@@ -62,7 +62,7 @@
         }
         else
         {
-            _error = GameClient.LastError?.Message ?? "No se pudo unir a la sala.";
+            _error = GameClient.LastError?.Message ?? "Could not join the room.";
         }
     }
 }

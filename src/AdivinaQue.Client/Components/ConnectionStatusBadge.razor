@@ -14,10 +14,10 @@
 
     private string Label => GameClient.ConnectionState switch
     {
-        HubConnectionState.Connected => "Conectado",
-        HubConnectionState.Reconnecting => "Reconectando…",
-        HubConnectionState.Connecting => "Conectando…",
-        _ => "Desconectado",
+        HubConnectionState.Connected => "Connected",
+        HubConnectionState.Reconnecting => "Reconnecting…",
+        HubConnectionState.Connecting => "Connecting…",
+        _ => "Disconnected",
     };
 
     private string CssClass => GameClient.ConnectionState == HubConnectionState.Connected ? "ok" : "warn";

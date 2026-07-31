@@ -2,8 +2,8 @@
 @inject GameClient GameClient
 
 <div class="character-select">
-    <h2>Elige tu personaje</h2>
-    <p class="muted">Es el que tu rival tiene que adivinar. Puedes cambiarlo mientras esperas.</p>
+    <h2>Choose your character</h2>
+    <p class="muted">This is the one your rival has to guess. You can change it while you wait.</p>
 
     @{
         var yourCard = GameClient.Projection!.YourCard;
@@ -12,8 +12,8 @@
     @if (yourCard is not null)
     {
         <p class="your-card">
-            Elegiste a <strong>@(string.IsNullOrEmpty(yourCard.Nombre) ? yourCard.Id : yourCard.Nombre)</strong>
-            — esperando a que tu rival elija el suyo…
+            You chose <strong>@(string.IsNullOrEmpty(yourCard.Nombre) ? yourCard.Id : yourCard.Nombre)</strong>
+            — waiting for your rival to choose theirs…
         </p>
     }
 
