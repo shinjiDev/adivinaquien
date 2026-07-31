@@ -14,11 +14,20 @@ public static class MatchFactory
     public static Match CreateLobby(FakeClock clock, int seed = 42, MatchOptions? options = null) =>
         Match.Create(PlayerA, PlayerB, BuildDeck(), clock, new SeededRandom(seed), options);
 
-    public static Match CreateInTurn(FakeClock clock, int seed = 42, MatchOptions? options = null)
+    public static Match CreateSetup(FakeClock clock, int seed = 42, MatchOptions? options = null)
     {
         var match = CreateLobby(clock, seed, options);
         match.SetReady(PlayerA);
         match.SetReady(PlayerB);
+        return match;
+    }
+
+    public static Match CreateInTurn(FakeClock clock, int seed = 42, MatchOptions? options = null)
+    {
+        var match = CreateSetup(clock, seed, options);
+        var deck = BuildDeck();
+        match.ChooseCharacter(PlayerA, deck[0].Id);
+        match.ChooseCharacter(PlayerB, deck[1].Id);
         return match;
     }
 

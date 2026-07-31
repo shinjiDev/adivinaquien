@@ -1,0 +1,39 @@
+@implements IDisposable
+@inject GameClient GameClient
+
+<div class="character-select">
+    <h2>Elige tu personaje</h2>
+    <p class="muted">Es el que tu rival tiene que adivinar. Puedes cambiarlo mientras esperas.</p>
+
+    @{
+        var yourCard = GameClient.Projection!.YourCard;
+    }
+
+    @if (yourCard is not null)
+    {
+        <p class="your-card">
+            Elegiste a <strong>@(string.IsNullOrEmpty(yourCard.Nombre) ? yourCard.Id : yourCard.Nombre)</strong>
+            — esperando a que tu rival elija el suyo…
+        </p>
+    }
+
+    <div class="card-grid">
+        @foreach (var card in GameClient.Projection!.Deck)
+        {
+            <CardTile Card="card"
+                      Selected="@(card.Id == yourCard?.Id)"
+                      Selectable="true"
+                      OnSelect="@(id => ChooseAsync(id))" />
+        }
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => GameClient.Changed -= OnChanged;
+
+    private Task ChooseAsync(string cardId) => GameClient.ChooseCharacterAsync(cardId);
+}

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.SignalR.Client;
 namespace AdivinaQue.Server.Tests.TestSupport;
 
 /// <summary>Boilerplate compartido: crear sala, unir al segundo jugador, marcar Ready
-/// ambos, y esperar a que el motor pase a InTurn — usado por todos los tests de
-/// integración que necesitan una partida ya arrancada como punto de partida.</summary>
+/// ambos, elegir un personaje cada uno (las dos primeras cartas del mazo, sin importar
+/// qué content pack esté cargado), y esperar a que el motor pase a InTurn — usado por
+/// todos los tests de integración que necesitan una partida ya arrancada como punto de
+/// partida.</summary>
 public static class GameplaySetup
 {
     public static async Task<(string Code, HubEventCollector A, HubEventCollector B, Guid ActivePlayerId)> CreateReadyGameAsync(
@@ -29,6 +31,12 @@ public static class GameplaySetup
 
         await connA.InvokeAsync("SetReady");
         await connB.InvokeAsync("SetReady");
+
+        var setup = await HubEventCollector.WaitForAsync(a.StateSyncs.Reader, s => s.Status == GameStatusDto.Setup);
+        await HubEventCollector.WaitForAsync(b.StateSyncs.Reader, s => s.Status == GameStatusDto.Setup);
+
+        await connA.InvokeAsync("ChooseCharacter", setup.Deck[0].Id);
+        await connB.InvokeAsync("ChooseCharacter", setup.Deck[1].Id);
 
         var startedA = await HubEventCollector.WaitForAsync(a.GameStarted.Reader, s => s.Status == GameStatusDto.InTurn);
         await HubEventCollector.WaitForAsync(b.GameStarted.Reader, s => s.Status == GameStatusDto.InTurn);

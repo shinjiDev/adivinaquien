@@ -203,6 +203,10 @@ code {
     text-align: center;
 }
 
+.character-select h2 {
+    text-align: center;
+}
+
 .ask-form textarea {
     resize: vertical;
     min-height: 4rem;
@@ -236,12 +240,14 @@ code {
 .card-tile {
     aspect-ratio: 3 / 4;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border: 1px solid #ccc;
     border-radius: 0.4rem;
     background: #fafafa;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-align: center;
     padding: 0.25rem;
     user-select: none;
@@ -255,6 +261,24 @@ code {
         opacity: 0.35;
         text-decoration: line-through;
         background: #eee;
+    }
+
+    .card-tile.selected {
+        border: 3px solid #0d6efd;
+        box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+    }
+
+    .card-tile-img {
+        width: 100%;
+        flex: 1;
+        min-height: 0;
+        object-fit: cover;
+        border-radius: 0.25rem;
+    }
+
+    .card-tile-label {
+        margin-top: 0.2rem;
+        line-height: 1.1;
     }
 
 .history ul {

@@ -26,6 +26,69 @@ public class IllegalActionMatrixTests
         match.SetReady(MatchFactory.PlayerA).Error.Should().Be(ErrorCode.WrongState);
     }
 
+    // ---- ChooseCharacter: solo en Setup, carta debe existir en el mazo ----
+
+    [Fact]
+    public void ChooseCharacter_UnknownPlayer_ReturnsWrongActor()
+    {
+        var match = MatchFactory.CreateSetup(NewClock());
+
+        match.ChooseCharacter(MatchFactory.Stranger, "card-0").Error.Should().Be(ErrorCode.WrongActor);
+    }
+
+    [Fact]
+    public void ChooseCharacter_WhileInLobby_ReturnsWrongState()
+    {
+        var match = MatchFactory.CreateLobby(NewClock());
+
+        match.ChooseCharacter(MatchFactory.PlayerA, "card-0").Error.Should().Be(ErrorCode.WrongState);
+    }
+
+    [Fact]
+    public void ChooseCharacter_AfterMatchAlreadyInTurn_ReturnsWrongState()
+    {
+        var match = MatchFactory.CreateInTurn(NewClock());
+
+        match.ChooseCharacter(MatchFactory.PlayerA, "card-2").Error.Should().Be(ErrorCode.WrongState);
+    }
+
+    [Fact]
+    public void ChooseCharacter_UnknownCard_ReturnsUnknownCard()
+    {
+        var match = MatchFactory.CreateSetup(NewClock());
+
+        match.ChooseCharacter(MatchFactory.PlayerA, "no-existe").Error.Should().Be(ErrorCode.UnknownCard);
+    }
+
+    [Fact]
+    public void ChooseCharacter_BothPlayersChoose_TransitionsToInTurnWithBothSecretCardsSet()
+    {
+        var match = MatchFactory.CreateSetup(NewClock());
+        var deck = MatchFactory.BuildDeck();
+
+        match.ChooseCharacter(MatchFactory.PlayerA, deck[0].Id).IsSuccess.Should().BeTrue();
+        match.Status.Should().Be(GameStatus.Setup, "todavía falta que el segundo jugador elija");
+
+        match.ChooseCharacter(MatchFactory.PlayerB, deck[1].Id).IsSuccess.Should().BeTrue();
+
+        match.Status.Should().Be(GameStatus.InTurn);
+        match.GetSecretCard(MatchFactory.PlayerA).Id.Should().Be(deck[0].Id);
+        match.GetSecretCard(MatchFactory.PlayerB).Id.Should().Be(deck[1].Id);
+    }
+
+    [Fact]
+    public void ChooseCharacter_CanBeChangedBeforeOpponentChooses()
+    {
+        var match = MatchFactory.CreateSetup(NewClock());
+        var deck = MatchFactory.BuildDeck();
+
+        match.ChooseCharacter(MatchFactory.PlayerA, deck[0].Id).IsSuccess.Should().BeTrue();
+        match.ChooseCharacter(MatchFactory.PlayerA, deck[1].Id).IsSuccess.Should().BeTrue();
+
+        match.Status.Should().Be(GameStatus.Setup);
+        match.GetSecretCard(MatchFactory.PlayerA).Id.Should().Be(deck[1].Id);
+    }
+
     // ---- AskQuestion: solo el PREGUNTADOR, solo en AwaitingQuestion ----
 
     [Fact]
@@ -381,6 +444,7 @@ public class IllegalActionMatrixTests
 
     public static IEnumerable<object[]> NonLobbyMatches()
     {
+        yield return new object[] { (Func<FakeClock, Match>)(clock => MatchFactory.CreateSetup(clock)) };
         yield return new object[] { (Func<FakeClock, Match>)(clock => MatchFactory.CreateInTurn(clock)) };
         yield return new object[] { (Func<FakeClock, Match>)(clock => MatchFactory.CreatePaused(clock, out _)) };
         yield return new object[] { (Func<FakeClock, Match>)(clock => MatchFactory.CreateFinished(clock)) };

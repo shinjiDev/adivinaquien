@@ -147,6 +147,8 @@ public sealed class GameClient : IAsyncDisposable
 
     public Task SetReadyAsync() => _connection!.InvokeAsync("SetReady");
 
+    public Task ChooseCharacterAsync(string cardId) => _connection!.InvokeAsync("ChooseCharacter", cardId);
+
     public Task AskQuestionAsync(Guid actionId, string text) =>
         _connection!.InvokeAsync("AskQuestion", actionId, text, (SuggestedFromDto?)null);
 

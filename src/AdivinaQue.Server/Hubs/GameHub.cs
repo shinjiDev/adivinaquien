@@ -74,6 +74,16 @@ public sealed class GameHub : Hub
         return RunActionAsync(info.RoomCode, m => m.SetReady(info.PlayerId));
     }
 
+    public Task ChooseCharacter(string cardId)
+    {
+        if (!TryGetConnection(out var info))
+        {
+            return SendInvalidRequestAsync();
+        }
+
+        return RunActionAsync(info.RoomCode, m => m.ChooseCharacter(info.PlayerId, cardId));
+    }
+
     public Task AskQuestion(Guid actionId, string text, SuggestedFromDto? suggestedFrom)
     {
         if (!TryGetConnection(out var info))
@@ -206,7 +216,12 @@ public sealed class GameHub : Hub
 
         if (result.Match is not null)
         {
-            var justStarted = result.StatusBefore == GameStatus.Lobby && result.Match.Status == GameStatus.InTurn;
+            // La transición a InTurn ahora ocurre en ChooseCharacter (StatusBefore=Setup),
+            // no en SetReady (StatusBefore=Lobby) como antes de que elegir personaje fuera
+            // una acción explícita del jugador — comparamos contra el estado anterior en
+            // vez de anclarnos a Lobby específicamente, así detectamos el arranque real
+            // de la partida sin importar desde qué estado se llegó a InTurn.
+            var justStarted = result.StatusBefore != GameStatus.InTurn && result.Match.Status == GameStatus.InTurn;
             await _events.PushStateSyncAsync(code, result.Match, justStarted ? EventNames.GameStarted : EventNames.StateSync);
 
             if (result.Match.Status == GameStatus.Finished)

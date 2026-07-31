@@ -12,21 +12,31 @@ tiene el `GameHub` de SignalR, gestión de salas con capacidad 2 atómica, `IGam
 cliente llame a nada. `AdivinaQue.Client` (Blazor WASM) tiene las 4 pantallas completas
 (inicio, sala de espera con QR, tablero, fin de partida) — verificado jugando una
 partida completa de punta a punta con dos contextos de navegador (Playwright), incluyendo
-reconexión y resync. `content/bailes-chile/pack.json` es un **borrador** de 24 cartas
-(pasa el validador, pendiente de verificación humana de los hechos folclóricos — ver
-`content/bailes-chile/MATRIZ-VERIFICACION.md`) contra el que el Client todavía no está
-conectado (sigue sirviendo el mazo placeholder de 16 cartas; conectar un pack real al
-Server es trabajo de infraestructura nuevo, no pedido explícitamente por ninguna fase).
-`docker-compose.yml` levanta el stack completo con Sqlite persistido en volumen —
-build y `docker compose up` verificados de punta a punta (imagen construida, contenedor
-sirviendo `/health` y `/` en 200, variables de entorno y volumen confirmados dentro del
-contenedor). 103 tests en verde en total (Engine + PackTool + Server, este último con
-integración real de dos clientes SignalR; el Client no suma un proyecto de tests de
-componentes, ver plan de Fase 4). Antes de escribir código de producto sobre este
+reconexión y resync. `docker-compose.yml` levanta el stack completo con Sqlite
+persistido en volumen — build y `docker compose up` verificados de punta a punta (imagen
+construida, contenedor sirviendo `/health` y `/` en 200, variables de entorno y volumen
+confirmados dentro del contenedor). Antes de escribir código de producto sobre este
 repo, revisa `docs/PROMPT-claude-code.md` para el contexto histórico de cada fase — el
 trabajo se ejecutó **fase por fase, deteniéndose al final de cada una** para mostrar un
 resumen y esperar aprobación antes de continuar; cualquier trabajo nuevo a partir de acá
 ya no tiene fases predefinidas en ese documento.
+
+**Post-fases: mazo real conectado + elección de personaje.** El `PlaceholderDeckProvider`
+de 16 cartas sintéticas quedó atrás. `Program.cs` ahora carga
+`content/characters/pack.json` (16 próceres y figuras históricas/culturales de Chile) vía
+`ContentPackDeckProvider`, y el Server monta todo `content/` como archivos estáticos bajo
+`/content` para que el Client pinte imagen y nombre reales en cada `CardTile` (no
+solo el `Id`). Cuál pack cargar es configurable (`ContentPack:PackId`, default
+`characters`; `content/bailes-chile/pack.json` sigue siendo un borrador sin conectar).
+Además, **elegir personaje ahora es una acción explícita del jugador, no una asignación
+aleatoria**: `Match.SetReady` lleva a ambos jugadores a `GameStatus.Setup` (pantalla
+`CharacterSelectView`), y cada uno llama `ChooseCharacter(cardId)` para fijar la carta que
+el rival debe adivinar — la partida recién pasa a `InTurn` cuando ambos eligieron. Ver
+`ChooseCharacter` en `Match.cs` y el hub method homónimo en `GameHub.cs`.
+`content/characters/pack.json` pasa el validador de `AdivinaQue.PackTool` con 0 errores.
+110 tests en verde en total (Engine + PackTool + Server, este último con integración real
+de dos clientes SignalR contra el mazo real de 16 personajes; el Client no suma un
+proyecto de tests de componentes, ver plan de Fase 4).
 
 ## Comandos
 
@@ -56,8 +66,11 @@ El archivo de solución es `AdivinaQue.slnx` (formato XML nuevo, no el `.sln` cl
 
 El Server lee `Storage:Provider` (`InMemory`|`Sqlite`), `Match:AnswerTimeoutSeconds`,
 `Match:DisconnectGraceSeconds`, `Match:WrongGuessPolicy`, `Room:TtlMinutes`,
-`Room:SweepIntervalSeconds` desde `appsettings.json` (todo sobreescribible por variable
-de entorno, p. ej. `Storage__Provider=Sqlite`).
+`Room:SweepIntervalSeconds`, `ContentPack:PackId` (default `characters`) y
+`ContentPack:RootDirectory` (default `../../content`, correcto para `dotnet run` local;
+el Dockerfile lo sobreescribe a `content` porque copia la carpeta como hermana del
+publish) desde `appsettings.json` (todo sobreescribible por variable de entorno, p. ej.
+`Storage__Provider=Sqlite`).
 
 ## Stack (no negociable)
 
@@ -86,14 +99,18 @@ src/
 ├── AdivinaQue.Engine/      # motor puro: sin red, sin I/O, sin DateTime.Now (implementado en Fase 1)
 ├── AdivinaQue.Server/      # Rooms/, Persistence/, Hubs/, BackgroundServices/, Mapping/, Qr/ (ver realtime-contract)
 ├── AdivinaQue.Client/      # Blazor WASM: Pages/ (Home, Join, Room), Components/ (WaitingRoomView,
-│                           # GameBoardView, GameOverView, CardTile, ConnectionStatusBadge),
-│                           # Services/ (GameClient, PlayerIdentity), wwwroot/js/interop.js (localStorage)
+│                           # CharacterSelectView, GameBoardView, GameOverView, CardTile,
+│                           # ConnectionStatusBadge), Services/ (GameClient, PlayerIdentity),
+│                           # wwwroot/js/interop.js (localStorage)
 └── AdivinaQue.PackTool/    # CLI que valida mazos y emite reporte (Model/, Analysis/, Validation/, Reporting/)
 tests/
 ├── AdivinaQue.Engine.Tests/    # xUnit + FluentAssertions, referencia Engine
 ├── AdivinaQue.PackTool.Tests/  # xUnit + FluentAssertions, referencia Contracts + PackTool (agregado en Fase 2)
 └── AdivinaQue.Server.Tests/    # xUnit + FluentAssertions + WebApplicationFactory, referencia Server
-content/<pack-id>/pack.json    # aparece en Fase 5 (mazo de bailes típicos de Chile)
+content/
+├── characters/pack.json      # ACTIVO: 16 personajes históricos de Chile, cargado por ContentPackDeckProvider
+│   └── img/<card-id>.png     # servido por el Server bajo /content/characters/img/...
+└── bailes-chile/pack.json    # borrador de Fase 5, sin conectar (ver MATRIZ-VERIFICACION.md)
 ```
 
 El esquema del content pack (`AdivinaQue.Contracts/ContentPack/`) vive en `Contracts`,

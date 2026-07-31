@@ -27,6 +27,11 @@ RUN dotnet publish src/AdivinaQue.Server/AdivinaQue.Server.csproj -c Release -o 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/publish .
+COPY content/ content/
+
+# Hermano del publish (WORKDIR /app), no "../../content" como en `dotnet run` local —
+# ver la nota en Program.cs sobre ContentPack:RootDirectory.
+ENV ContentPack__RootDirectory=content
 
 EXPOSE 8080
 ENTRYPOINT ["dotnet", "AdivinaQue.Server.dll"]

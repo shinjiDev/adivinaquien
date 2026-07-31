@@ -87,6 +87,8 @@ public abstract class GameStoreContractTests
         var match = Match.Create(playerA, playerB, new[] { new Card("c1"), new Card("c2") }, clock, new SeededRandom(1));
         match.SetReady(playerA);
         match.SetReady(playerB);
+        match.ChooseCharacter(playerA, "c1");
+        match.ChooseCharacter(playerB, "c2");
 
         var room = new RoomRecord
         {

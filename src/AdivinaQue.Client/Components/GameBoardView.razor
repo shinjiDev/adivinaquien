@@ -34,7 +34,7 @@
 
     <div class="your-card">
         <span>Tu carta:</span>
-        <strong>@(projection.YourCard?.Id ?? "?")</strong>
+        <strong>@(YourCardDisplayName(projection.YourCard))</strong>
     </div>
 
     @if (isActivePlayer && projection.Phase == TurnPhaseDto.AwaitingQuestion)
@@ -126,6 +126,9 @@
     private void OnChanged() => InvokeAsync(StateHasChanged);
 
     public void Dispose() => GameClient.Changed -= OnChanged;
+
+    private static string YourCardDisplayName(CardDto? card) =>
+        card is null ? "?" : string.IsNullOrEmpty(card.Nombre) ? card.Id : card.Nombre;
 
     private static string PhaseLabel(TurnPhaseDto? phase) => phase switch
     {

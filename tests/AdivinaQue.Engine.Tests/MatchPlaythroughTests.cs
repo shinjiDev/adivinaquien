@@ -50,6 +50,11 @@ public class MatchPlaythroughTests
 
         match.SetReady(MatchFactory.PlayerA).IsSuccess.Should().BeTrue();
         match.SetReady(MatchFactory.PlayerB).IsSuccess.Should().BeTrue();
+        match.Status.Should().Be(GameStatus.Setup);
+
+        var deck = MatchFactory.BuildDeck();
+        match.ChooseCharacter(MatchFactory.PlayerA, deck[0].Id).IsSuccess.Should().BeTrue();
+        match.ChooseCharacter(MatchFactory.PlayerB, deck[1].Id).IsSuccess.Should().BeTrue();
         match.Status.Should().Be(GameStatus.InTurn);
 
         var questioner = match.ActivePlayerId;
@@ -66,7 +71,6 @@ public class MatchPlaythroughTests
         match.SubmitAnswer(Guid.NewGuid(), responder, Answer.Yes).IsSuccess.Should().BeTrue();
         match.Phase.Should().Be(TurnPhase.AwaitingEliminations);
 
-        var deck = MatchFactory.BuildDeck();
         var discardedCard = deck.First(c => c.Id != match.GetSecretCard(responder).Id).Id;
         match.ToggleElimination(questioner, discardedCard).IsSuccess.Should().BeTrue();
         match.EndTurn(Guid.NewGuid(), questioner).IsSuccess.Should().BeTrue();

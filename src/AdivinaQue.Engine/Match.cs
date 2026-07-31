@@ -102,7 +102,38 @@ public sealed class Match
 
         if (_readyA && _readyB)
         {
-            BeginSetupAndFirstTurn();
+            Status = GameStatus.Setup;
+        }
+
+        StateVersion++;
+        return Result.Ok();
+    }
+
+    public Result ChooseCharacter(Guid playerId, string cardId)
+    {
+        AdvanceTime();
+
+        if (!IsKnownPlayer(playerId))
+        {
+            return Result.Fail(ErrorCode.WrongActor);
+        }
+
+        if (Status != GameStatus.Setup)
+        {
+            return Result.Fail(ErrorCode.WrongState);
+        }
+
+        var card = _deck.FirstOrDefault(c => c.Id == cardId);
+        if (card is null)
+        {
+            return Result.Fail(ErrorCode.UnknownCard);
+        }
+
+        _secretCards[playerId] = card;
+
+        if (_secretCards.ContainsKey(PlayerA) && _secretCards.ContainsKey(PlayerB))
+        {
+            BeginFirstTurn();
         }
 
         StateVersion++;
@@ -571,15 +602,8 @@ public sealed class Match
         StateVersion++;
     }
 
-    private void BeginSetupAndFirstTurn()
+    private void BeginFirstTurn()
     {
-        Status = GameStatus.Setup;
-
-        var shuffled = _deck.ToList();
-        _random.Shuffle(shuffled);
-        _secretCards[PlayerA] = shuffled[0];
-        _secretCards[PlayerB] = shuffled[1];
-
         ActivePlayerId = _random.Next(0, 2) == 0 ? PlayerA : PlayerB;
         Phase = TurnPhase.AwaitingQuestion;
         Status = GameStatus.InTurn;

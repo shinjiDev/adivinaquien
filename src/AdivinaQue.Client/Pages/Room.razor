@@ -31,8 +31,10 @@ else
     @switch (GameClient.Projection.Status)
     {
         case GameStatusDto.Lobby:
-        case GameStatusDto.Setup:
             <WaitingRoomView Code="@Code" />
+            break;
+        case GameStatusDto.Setup:
+            <CharacterSelectView />
             break;
         case GameStatusDto.Finished:
             <GameOverView />

@@ -1,5 +1,9 @@
 <div class="card-tile @CssClass" @onclick="HandleClick">
-    <span class="card-tile-label">@Card.Id</span>
+    @if (!string.IsNullOrEmpty(Card.Imagen))
+    {
+        <img class="card-tile-img" src="@($"/content/{Card.Imagen}")" alt="@DisplayName" />
+    }
+    <span class="card-tile-label">@DisplayName</span>
 </div>
 
 @code {
@@ -10,13 +14,20 @@
     public bool Eliminated { get; set; }
 
     [Parameter]
+    public bool Selected { get; set; }
+
+    [Parameter]
     public bool Selectable { get; set; }
 
     [Parameter]
     public EventCallback<string> OnSelect { get; set; }
 
+    private string DisplayName => string.IsNullOrEmpty(Card.Nombre) ? Card.Id : Card.Nombre;
+
     private string CssClass =>
-        (Eliminated ? "eliminated " : string.Empty) + (Selectable ? "selectable" : string.Empty);
+        (Eliminated ? "eliminated " : string.Empty) +
+        (Selected ? "selected " : string.Empty) +
+        (Selectable ? "selectable" : string.Empty);
 
     private Task HandleClick() => Selectable ? OnSelect.InvokeAsync(Card.Id) : Task.CompletedTask;
 }
