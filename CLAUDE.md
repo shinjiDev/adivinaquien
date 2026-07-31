@@ -79,6 +79,25 @@ el rival debe adivinar — la partida recién pasa a `InTurn` cuando ambos eligi
 de dos clientes SignalR contra el mazo real de 16 personajes y contra Azurite para
 Table Storage; el Client no suma un proyecto de tests de componentes, ver plan de Fase 4).
 
+**Desplegado en producción** en Azure Container Apps:
+https://adivinaquien-prod-app.delightfulflower-fcacab7e.brazilsouth.azurecontainerapps.io
+— infraestructura completa en `infra/` (Bicep), scripts de despliegue en `scripts/`
+(`deploy.sh`/`deploy.ps1`, `preflight.sh`, `smoke-test.sh`, `teardown.sh`), imagen
+publicada en `ghcr.io/shinjidev/adivinaquien`. Ver git log para el detalle fase por fase
+(Fase 0: budget: Fase 1: cambios de app para Container Apps; Fase 2: módulos Bicep;
+Fase 3: scripts de despliegue).
+
+**Post-despliegue: UI en inglés, rebranding, compartir sala, paleta pastel.** Toda la UI
+de `AdivinaQue.Client` (páginas, componentes, mensajes de error del `GameHub`, y el
+contenido de `content/characters/pack.json`: atributos, preguntas, fichas biográficas)
+está en inglés — el título pasó a "Guess Who? Chilean historical characters" (nombres
+propios de los personajes sin traducir). `WaitingRoomView` ahora ofrece compartir la
+invitación vía Web Share API (`blazorInterop.share`, con fallback automático si el
+navegador no lo soporta) o copiar el link/código al portapapeles
+(`blazorInterop.copyText`), con feedback visual de 2s. La paleta de colores de
+`app.css` se repintó a tonos pastel (variables CSS en `:root`, ver `--color-*`) sin
+tocar layout ni espaciado — cambio deliberadamente acotado solo a color.
+
 ## Comandos
 
 ```
