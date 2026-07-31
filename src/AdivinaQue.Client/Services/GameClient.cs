@@ -38,6 +38,13 @@ public sealed class GameClient : IAsyncDisposable
 
     public double? OpponentDisconnectSecondsRemaining { get; private set; }
 
+    // Con autoescalado a cero (Container Apps) el primer jugador de una partida puede
+    // llegar mientras el contenedor todavía está arrancando desde frío. A diferencia de
+    // WithAutomaticReconnect (que solo reintenta caídas DESPUÉS de una conexión ya
+    // exitosa), el primer StartAsync no tiene reintento propio en SignalR — por eso
+    // ConnectAsync lo envuelve en su propio bucle de reintentos más abajo.
+    public bool IsWakingUp { get; private set; }
+
     public HubConnectionState ConnectionState => _connection?.State ?? HubConnectionState.Disconnected;
 
     public async Task ConnectAsync()
@@ -113,12 +120,51 @@ public sealed class GameClient : IAsyncDisposable
         };
 
         _connection = connection;
-        await connection.StartAsync();
+        await StartWithColdStartRetryAsync(connection);
+    }
+
+    // Reintenta el StartAsync inicial con backoff mientras el contenedor recién
+    // arranca desde cero — hasta 2 minutos en total, un margen generoso frente al
+    // arranque en frío reconocido por la propia documentación de Container Apps (no
+    // hay garantía de que la primera conexión llegue de una, ver plan de despliegue).
+    // Pasado ese tiempo, deja de tragarse el error: la última excepción se propaga tal
+    // cual para que quien llamó ConnectAsync sepa que esto ya no es un cold start
+    // normal, sino una falla real.
+    private async Task StartWithColdStartRetryAsync(HubConnection connection)
+    {
+        var delays = new[]
+        {
+            TimeSpan.FromSeconds(1),
+            TimeSpan.FromSeconds(2),
+            TimeSpan.FromSeconds(4),
+            TimeSpan.FromSeconds(8),
+        };
+        var deadline = DateTimeOffset.UtcNow + TimeSpan.FromMinutes(2);
+        var attempt = 0;
+
+        while (true)
+        {
+            try
+            {
+                await connection.StartAsync();
+                IsWakingUp = false;
+                NotifyChanged();
+                return;
+            }
+            catch when (DateTimeOffset.UtcNow < deadline)
+            {
+                IsWakingUp = true;
+                NotifyChanged();
+                await Task.Delay(delays[Math.Min(attempt, delays.Length - 1)]);
+                attempt++;
+            }
+        }
     }
 
     public async Task<bool> CreateRoomAsync()
     {
         await ConnectAsync();
+        ResetRoomState();
         _pendingRoomAttempt = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         await _connection!.InvokeAsync("CreateRoom", PlayerId);
         return await _pendingRoomAttempt.Task;
@@ -140,9 +186,24 @@ public sealed class GameClient : IAsyncDisposable
             return true;
         }
 
+        ResetRoomState();
         _pendingRoomAttempt = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         await _connection!.InvokeAsync("JoinRoom", code, PlayerId);
         return await _pendingRoomAttempt.Task;
+    }
+
+    // Crear o unirse a una sala nueva debe partir de cero: si no se limpia Projection acá,
+    // una sala anterior que terminó en Finished deja su ProjectionDto viejo dando vueltas,
+    // y Room.razor (que solo mira "Projection is null?" para decidir si mostrar la sala de
+    // espera) lo interpreta como que la partida NUEVA ya terminó, mandando directo a
+    // GameOverView con el resultado de la partida anterior.
+    private void ResetRoomState()
+    {
+        Projection = null;
+        RoomCode = null;
+        RoomPlayerIds = Array.Empty<Guid>();
+        OpponentDisconnectSecondsRemaining = null;
+        _lastStateVersion = -1;
     }
 
     public Task SetReadyAsync() => _connection!.InvokeAsync("SetReady");

@@ -21,4 +21,14 @@ public class HealthEndpointTests : IClassFixture<WebApplicationFactory<Program>>
 
         response.IsSuccessStatusCode.Should().BeTrue();
     }
+
+    [Fact]
+    public async Task Healthz_ReturnsOk_WhenGameStoreResponds()
+    {
+        var client = _factory.CreateClient();
+
+        var response = await client.GetAsync("/healthz");
+
+        response.IsSuccessStatusCode.Should().BeTrue();
+    }
 }

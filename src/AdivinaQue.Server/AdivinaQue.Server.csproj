@@ -1,6 +1,24 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
+  <!-- Solo activo cuando el Dockerfile publica con la property EnableReadyToRun (recorta
+       el arranque en frío, ver plan de despliegue, Fase 1). RuntimeIdentifier y
+       SelfContained van acá adentro del csproj, condicionados a esta property propia, en
+       vez de pasarse en la línea de comandos: esos sí son properties conocidas por todo
+       el SDK y se filtran a AdivinaQue.Client.csproj (referenciado más abajo) por ser
+       propiedades globales de MSBuild, chocando ahí con el trimming propio de Blazor WASM
+       (error NETSDK1102). Una property con nombre propio que el Client no conoce de nada
+       lo deja completamente afuera. -->
+  <PropertyGroup Condition="'$(EnableReadyToRun)' == 'true'">
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <SelfContained>false</SelfContained>
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.11.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.5.3" />
+    <PackageReference Include="Azure.Identity" Version="1.21.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.29.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.28" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.8" />
     <PackageReference Include="QRCoder" Version="1.6.0" />

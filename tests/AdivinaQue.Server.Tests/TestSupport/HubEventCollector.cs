@@ -30,6 +30,8 @@ public sealed class HubEventCollector
 
     public Channel<bool> OpponentReconnected { get; } = Channel.CreateUnbounded<bool>();
 
+    public Channel<bool> ServerShuttingDown { get; } = Channel.CreateUnbounded<bool>();
+
     public HubEventCollector(HubConnection connection)
     {
         Connection = connection;
@@ -41,6 +43,7 @@ public sealed class HubEventCollector
         connection.On(EventNames.QuestionExpired, () => QuestionExpired.Writer.TryWrite(true));
         connection.On<double>(EventNames.OpponentDisconnected, secs => OpponentDisconnected.Writer.TryWrite(secs));
         connection.On(EventNames.OpponentReconnected, () => OpponentReconnected.Writer.TryWrite(true));
+        connection.On(EventNames.ServerShuttingDown, () => ServerShuttingDown.Writer.TryWrite(true));
     }
 
     public static async Task<T> WaitAsync<T>(ChannelReader<T> reader, TimeSpan? timeout = null)

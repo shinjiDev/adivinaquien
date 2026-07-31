@@ -3,6 +3,13 @@
 @inject GameClient GameClient
 
 <div class="app-shell">
+    @if (GameClient.IsWakingUp)
+    {
+        <div class="banner warn">
+            <span>Despertando el servidor… puede tardar unos segundos.</span>
+        </div>
+    }
+
     @if (GameClient.LastError is not null)
     {
         <div class="banner warn error-toast">

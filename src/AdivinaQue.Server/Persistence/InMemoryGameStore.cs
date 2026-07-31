@@ -30,4 +30,6 @@ public sealed class InMemoryGameStore : IGameStore
         IReadOnlyList<RoomRecord> all = _rooms.Values.Select(RoomRecordSerializer.Deserialize).ToList();
         return Task.FromResult(all);
     }
+
+    public Task PingAsync(CancellationToken ct = default) => Task.CompletedTask;
 }

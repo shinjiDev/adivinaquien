@@ -272,7 +272,10 @@ code {
         width: 100%;
         flex: 1;
         min-height: 0;
-        object-fit: cover;
+        /* contain (no cover): la carta trae el nombre impreso al pie de la imagen —
+           recortar con "cover" corta ese texto a la mitad en varios retratos según su
+           proporción. "contain" siempre muestra la imagen completa, sin cortar nada. */
+        object-fit: contain;
         border-radius: 0.25rem;
     }
 

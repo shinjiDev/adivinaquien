@@ -18,4 +18,11 @@ public static class EventNames
     public const string OpponentReconnected = "OpponentReconnected";
     public const string GameOver = "GameOver";
     public const string Error = "Error";
+
+    // Con autoescalado a cero (Container Apps), el proceso puede terminar en cualquier
+    // momento en que no haya tráfico activo — no solo en un deploy. Este evento avisa a
+    // los clientes conectados justo antes del apagado ordenado, para que la
+    // desconexión que sigue se vea como lo que es (el server bajando a propósito) y no
+    // como un error de red — el cliente ya reconecta solo vía WithAutomaticReconnect.
+    public const string ServerShuttingDown = "ServerShuttingDown";
 }

@@ -103,6 +103,21 @@ public sealed class SqliteGameStore : IGameStore, IDisposable
         }
     }
 
+    public async Task PingAsync(CancellationToken ct = default)
+    {
+        await _lock.WaitAsync(ct);
+        try
+        {
+            await using var command = _connection.CreateCommand();
+            command.CommandText = "SELECT 1";
+            await command.ExecuteScalarAsync(ct);
+        }
+        finally
+        {
+            _lock.Release();
+        }
+    }
+
     public void Dispose()
     {
         _connection.Dispose();

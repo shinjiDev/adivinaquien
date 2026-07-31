@@ -1,8 +1,10 @@
+using System.Net.Sockets;
 using AdivinaQue.Engine;
 using AdivinaQue.Engine.Abstractions;
 using AdivinaQue.Server.Persistence;
 using AdivinaQue.Server.Rooms;
 using AdivinaQue.Server.Tests.TestSupport;
+using Azure.Data.Tables;
 using FluentAssertions;
 
 namespace AdivinaQue.Server.Tests;
@@ -16,7 +18,7 @@ public abstract class GameStoreContractTests
 {
     protected abstract IGameStore CreateStore();
 
-    [Fact]
+    [SkippableFact]
     public async Task GetAsync_UnknownCode_ReturnsNull()
     {
         var store = CreateStore();
@@ -24,7 +26,7 @@ public abstract class GameStoreContractTests
         (await store.GetAsync("ZZZZZZ")).Should().BeNull();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task SaveThenGet_ReturnsIsolatedCopy()
     {
         var store = CreateStore();
@@ -40,7 +42,7 @@ public abstract class GameStoreContractTests
         reloaded!.PlayerB.Should().BeNull("mutar la copia leída sin volver a Save no debe afectar lo persistido");
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task Save_Twice_OverwritesPreviousValue()
     {
         var store = CreateStore();
@@ -54,7 +56,7 @@ public abstract class GameStoreContractTests
         loaded!.PlayerB.Should().Be(room.PlayerB);
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task DeleteAsync_RemovesRoom()
     {
         var store = CreateStore();
@@ -65,7 +67,7 @@ public abstract class GameStoreContractTests
         (await store.GetAsync("DEL001")).Should().BeNull();
     }
 
-    [Fact]
+    [SkippableFact]
     public async Task GetAllAsync_ReturnsAllSavedRooms()
     {
         var store = CreateStore();
@@ -77,7 +79,17 @@ public abstract class GameStoreContractTests
         all.Select(r => r.Code).Should().Contain(new[] { "ALL001", "ALL002" });
     }
 
-    [Fact]
+    [SkippableFact]
+    public async Task PingAsync_DoesNotThrow_WhenStoreIsReachable()
+    {
+        var store = CreateStore();
+
+        var act = async () => await store.PingAsync();
+
+        await act.Should().NotThrowAsync();
+    }
+
+    [SkippableFact]
     public async Task SaveThenGet_RoundTripsMatchSnapshotFaithfully()
     {
         var store = CreateStore();
@@ -123,4 +135,44 @@ public sealed class SqliteGameStoreContractTests : GameStoreContractTests, IDisp
     protected override IGameStore CreateStore() => _store;
 
     public void Dispose() => _store.Dispose();
+}
+
+/// <summary>
+/// Corre el mismo contrato contra Azurite (emulador local de Azure Storage) en vez de
+/// contra la nube real — así el mismo IGameStore que se usa en Container Apps
+/// (Storage:Provider=Table) queda probado de verdad, no solo compilado contra la
+/// interfaz. Requiere `azurite` corriendo en los puertos default (10000-10002); si no
+/// está disponible el fixture salta la clase entera con un mensaje explícito en vez de
+/// fallar de forma confusa.
+/// </summary>
+public sealed class TableStorageGameStoreContractTests : GameStoreContractTests
+{
+    // Connection string bien conocida y pública del emulador Azurite — no es un secreto
+    // real, es la misma para cualquier instalación de Azurite en cualquier máquina.
+    private const string AzuriteConnectionString =
+        "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;" +
+        "AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;" +
+        "TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;";
+
+    protected override IGameStore CreateStore()
+    {
+        Skip.IfNot(IsAzuriteReachable(), "Azurite no está corriendo en 127.0.0.1:10002 — " +
+            "instálalo con 'npm install -g azurite' y arráncalo con " +
+            "'azurite --skipApiVersionCheck --location <carpeta>' para correr estos tests.");
+
+        return new TableStorageGameStore(new TableServiceClient(AzuriteConnectionString));
+    }
+
+    private static bool IsAzuriteReachable()
+    {
+        try
+        {
+            using var client = new TcpClient();
+            return client.ConnectAsync("127.0.0.1", 10002).Wait(TimeSpan.FromMilliseconds(500));
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
