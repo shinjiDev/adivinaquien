@@ -218,7 +218,13 @@ static BlobClient CreateDataProtectionBlobClient(IConfiguration config)
             ? new DefaultAzureCredential()
             : new ManagedIdentityCredential(ManagedIdentityId.FromUserAssignedClientId(clientId));
 
-        containerClient = new BlobContainerClient(new Uri(endpoint), credential);
+        // BlobContainerClient(Uri, ...) espera la URI del CONTENEDOR, no la raíz de la
+        // cuenta — Storage:BlobEndpoint es el endpoint de servicio
+        // (https://cuenta.blob.core.windows.net/). Sin el segmento del contenedor, el
+        // SDK arma una request malformada contra la API REST (visto en producción:
+        // "InvalidQueryParameterValue" al hacer CreateIfNotExists).
+        var containerUri = new Uri($"{endpoint.TrimEnd('/')}/{containerName}");
+        containerClient = new BlobContainerClient(containerUri, credential);
     }
 
     containerClient.CreateIfNotExists();
