@@ -23,7 +23,7 @@ public static class ProjectionMapper
         projection.Pause is null ? null : ToDto(projection.Pause),
         projection.Finish is null ? null : ToDto(projection.Finish));
 
-    public static CardDto ToDto(Card card) => new(card.Id, card.Nombre, card.Imagen);
+    public static CardDto ToDto(Card card) => new(card.Id, card.Nombre, card.Imagen, card.Ficha);
 
     public static QuestionEntryDto ToDto(QuestionView question) => new(
         question.ActionId,

@@ -120,10 +120,25 @@
     private string _questionText = string.Empty;
     private bool _guessMode;
     private bool _busy;
+    private TurnPhaseDto? _lastObservedPhase;
 
-    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+    protected override void OnInitialized()
+    {
+        GameClient.Changed += OnChanged;
+        _lastObservedPhase = GameClient.Projection?.Phase;
+    }
 
-    private void OnChanged() => InvokeAsync(StateHasChanged);
+    private void OnChanged()
+    {
+        var newPhase = GameClient.Projection?.Phase;
+        if (_lastObservedPhase == TurnPhaseDto.AwaitingAnswer && newPhase == TurnPhaseDto.AwaitingEliminations)
+        {
+            _ = JsRuntime.InvokeVoidAsync("blazorInterop.playSound", "answer");
+        }
+        _lastObservedPhase = newPhase;
+
+        InvokeAsync(StateHasChanged);
+    }
 
     public void Dispose() => GameClient.Changed -= OnChanged;
 
@@ -156,6 +171,7 @@
         await GameClient.AskQuestionAsync(Guid.NewGuid(), _questionText.Trim());
         _questionText = string.Empty;
         _busy = false;
+        _ = JsRuntime.InvokeVoidAsync("blazorInterop.playSound", "ask");
     }
 
     private async Task AnswerAsync(AnswerDto answer)
@@ -187,5 +203,6 @@
         }
 
         await GameClient.ToggleEliminationAsync(cardId);
+        _ = JsRuntime.InvokeVoidAsync("blazorInterop.playSound", "toggle");
     }
 }

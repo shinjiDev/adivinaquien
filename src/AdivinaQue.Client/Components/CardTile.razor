@@ -1,9 +1,15 @@
 <div class="card-tile @CssClass" @onclick="HandleClick">
-    @if (!string.IsNullOrEmpty(Card.Imagen))
+    <div class="card-tile-inner">
+        @if (!string.IsNullOrEmpty(Card.Imagen))
+        {
+            <img class="card-tile-img" src="@($"/content/{Card.Imagen}")" alt="@DisplayName" />
+        }
+        <span class="card-tile-label">@DisplayName</span>
+    </div>
+    @if (!string.IsNullOrEmpty(Card.Ficha))
     {
-        <img class="card-tile-img" src="@($"/content/{Card.Imagen}")" alt="@DisplayName" />
+        <div class="card-tooltip">@Card.Ficha</div>
     }
-    <span class="card-tile-label">@DisplayName</span>
 </div>
 
 @code {

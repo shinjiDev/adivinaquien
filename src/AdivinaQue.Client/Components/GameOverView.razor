@@ -1,5 +1,6 @@
 @implements IDisposable
 @inject GameClient GameClient
+@inject IJSRuntime JsRuntime
 
 @{
     var projection = GameClient.Projection!;
@@ -40,7 +41,21 @@
 </div>
 
 @code {
-    protected override void OnInitialized() => GameClient.Changed += OnChanged;
+    protected override void OnInitialized()
+    {
+        GameClient.Changed += OnChanged;
+
+        var youWon = GameClient.Projection!.Finish!.Winner == GameClient.PlayerId;
+        if (youWon)
+        {
+            _ = JsRuntime.InvokeVoidAsync("blazorInterop.playSound", "win");
+            _ = JsRuntime.InvokeVoidAsync("blazorInterop.confetti");
+        }
+        else
+        {
+            _ = JsRuntime.InvokeVoidAsync("blazorInterop.playSound", "lose");
+        }
+    }
 
     private void OnChanged() => InvokeAsync(StateHasChanged);
 

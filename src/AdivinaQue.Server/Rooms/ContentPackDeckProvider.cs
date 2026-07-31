@@ -21,7 +21,7 @@ public sealed class ContentPackDeckProvider : IDeckProvider
         var definition = PackParser.Parse(json);
 
         _deck = definition.Cartas
-            .Select(card => new Card(card.Id, card.Nombre, $"{packId}/{card.Imagen}"))
+            .Select(card => new Card(card.Id, card.Nombre, $"{packId}/{card.Imagen}", card.Ficha ?? ""))
             .ToList();
     }
 
