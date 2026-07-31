@@ -38,9 +38,6 @@ param blobEndpoint string
 @description('Imagen completa (registro/repo:tag). PLACEHOLDER hasta Fase 3 — ver nota en main.bicep, no hay imagen real en ghcr.io todavía.')
 param containerImage string
 
-@description('Servidor del registro de contenedores. ghcr.io no requiere credenciales para imágenes públicas, pero sí requiere registrar el servidor explícitamente.')
-param registryServer string = 'ghcr.io'
-
 @description('Entorno ASP.NET Core.')
 param aspnetEnvironment string = 'Production'
 
@@ -63,11 +60,14 @@ resource containerApp 'Microsoft.App/containerApps@2026-01-01' = {
         transport: 'auto'
         allowInsecure: false
       }
-      registries: [
-        {
-          server: registryServer
-        }
-      ]
+      // Sin bloque `registries`, a propósito: ese array es solo para registries
+      // CREDENCIADOS (requiere username + passwordSecretRef, ver doc de Container
+      // Apps "Container registries"). Un despliegue real con
+      // `registries: [{ server: 'ghcr.io' }]` sin password falló con
+      // ContainerAppRegistriesPasswordSecretRefNotFound porque ARM interpreta
+      // cualquier entrada en `registries` como una que exige credenciales. Para una
+      // imagen pública (nuestro caso) simplemente no se declara el registry — Container
+      // Apps la pulea anónimamente igual, con solo `image` apuntando a ghcr.io.
     }
     template: {
       terminationGracePeriodSeconds: 30
