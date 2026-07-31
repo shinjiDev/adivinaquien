@@ -17,6 +17,8 @@
 #   --image-tag <tag>            Default: SHA corto de HEAD
 #   --skip-build                 No buildear/pushear la imagen; usa --image-tag existente en ghcr.io
 #   --yes                        No pedir confirmación interactiva tras el what-if
+#   --allow-spending-limit-off   Decisión ya tomada de continuar con el límite de gasto
+#                                 de la suscripción apagado (ver preflight-budget-check.sh)
 
 set -euo pipefail
 
@@ -31,6 +33,7 @@ ENVIRONMENT="prod"
 IMAGE_TAG=""
 SKIP_BUILD=0
 ASSUME_YES=0
+ALLOW_SPENDING_LIMIT_OFF=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -42,6 +45,7 @@ while [[ $# -gt 0 ]]; do
     --image-tag) IMAGE_TAG="$2"; shift 2 ;;
     --skip-build) SKIP_BUILD=1; shift ;;
     --yes) ASSUME_YES=1; shift ;;
+    --allow-spending-limit-off) ALLOW_SPENDING_LIMIT_OFF=1; shift ;;
     *) echo "Argumento desconocido: $1" >&2; exit 2 ;;
   esac
 done
@@ -57,7 +61,9 @@ fail() {
 cd "$REPO_ROOT"
 
 log "=== 1/8 — Preflight ==="
-"$SCRIPT_DIR/preflight.sh" --subscription "$SUBSCRIPTION" --location "$LOCATION"
+PREFLIGHT_ARGS=(--subscription "$SUBSCRIPTION" --location "$LOCATION")
+[[ "$ALLOW_SPENDING_LIMIT_OFF" == "1" ]] && PREFLIGHT_ARGS+=(--allow-spending-limit-off)
+"$SCRIPT_DIR/preflight.sh" "${PREFLIGHT_ARGS[@]}"
 
 az account set --subscription "$SUBSCRIPTION" || fail "No se pudo cambiar a la suscripción '$SUBSCRIPTION'."
 

@@ -12,19 +12,29 @@
 # subcomando dedicado de `az account`/`az billing` para esto, así que se consulta con
 # `az rest` directo contra el Resource Manager.
 #
-# Uso: ./preflight-budget-check.sh [--subscription <id-o-nombre>]
+# Uso: ./preflight-budget-check.sh [--subscription <id-o-nombre>] [--allow-off]
 # Salida: 0 si el límite está On. Distinto de cero en cualquier otro caso (Off,
 # CurrentPeriodOff, no aplica al tipo de suscripción, o no se pudo verificar) — el
 # llamador (deploy.sh) debe tratar cualquier salida no-cero como "no continuar".
+#
+# --allow-off: baja Off/CurrentPeriodOff de abort duro a aviso (exit 0, con el mismo
+# mensaje impreso). Es una decisión explícita del usuario, tomada una vez y pasada por
+# flag — no un default, porque sin el límite de gasto la única red de seguridad real es
+# la alerta de presupuesto de 1 USD por email (no corta nada automáticamente).
 
 set -euo pipefail
 
 SUBSCRIPTION=""
+ALLOW_OFF=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --subscription)
       SUBSCRIPTION="$2"
       shift 2
+      ;;
+    --allow-off)
+      ALLOW_OFF=1
+      shift
       ;;
     *)
       echo "Argumento desconocido: $1" >&2
@@ -73,7 +83,7 @@ case "$SPENDING_LIMIT" in
     exit 0
     ;;
   Off|CurrentPeriodOff)
-    fail "$(cat <<EOF
+    MSG="$(cat <<EOF
 Límite de gasto: $SPENDING_LIMIT (NO protegido).
 Actívalo antes de desplegar nada:
   1. Portal de Azure -> Cost Management + Billing -> Suscripciones
@@ -82,6 +92,11 @@ Actívalo antes de desplegar nada:
 No existe API de escritura para esto — es solo desde el portal.
 EOF
 )"
+    if [[ "$ALLOW_OFF" == "1" ]]; then
+      log "AVISO (continuando por --allow-off): $MSG"
+      exit 0
+    fi
+    fail "$MSG"
     ;;
   *)
     fail "Valor de spendingLimit no reconocido: '$SPENDING_LIMIT'. Revisa manualmente en el portal antes de continuar."

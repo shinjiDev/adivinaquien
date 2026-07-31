@@ -15,7 +15,8 @@ param(
     [string]$Environment = "prod",
     [string]$ImageTag,
     [switch]$SkipBuild,
-    [switch]$Yes
+    [switch]$Yes,
+    [switch]$AllowSpendingLimitOff
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,7 +35,9 @@ if (-not $bashCmd) {
 Push-Location $RepoRoot
 try {
     Log "=== 1/8 - Preflight ==="
-    & bash "$ScriptDir/preflight.sh" --subscription $Subscription --location $Location
+    $preflightArgs = @("--subscription", $Subscription, "--location", $Location)
+    if ($AllowSpendingLimitOff) { $preflightArgs += "--allow-spending-limit-off" }
+    & bash "$ScriptDir/preflight.sh" @preflightArgs
     if ($LASTEXITCODE -ne 0) { Fail "preflight.sh abortó (código $LASTEXITCODE)." }
 
     az account set --subscription $Subscription
